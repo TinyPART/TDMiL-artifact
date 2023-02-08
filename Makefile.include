@@ -1,0 +1,2 @@
+include $(TINYPARTBASE)/Makefile.vars
+include $(RIOTBASE)/Makefile.include
