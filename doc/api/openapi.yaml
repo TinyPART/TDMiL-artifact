@@ -1,0 +1,51 @@
+openapi: 3.0.3
+info:
+  title: TinyPART ML CoAP endpoints
+  description: |-
+    This is the description of the endpoints used by the clients in the TinyPART machine learning project
+  version: "0.0.1"
+externalDocs:
+  description: TinyPART
+  url: https://notes.inria.fr/Dgw5bh77S2ip2NRlLYqR9w#
+tags:
+  - name: param
+    description: Operations on ML parameters
+paths:
+  "/l_param_c_1":
+    put:
+      tags: 
+       - param
+      summary: Update the parameters
+      requestBody:
+        content:
+          application/cbor:
+            schema:
+              $ref: '#/components/schemas/MatrixParams'
+        required: true
+      responses:
+        '201':
+          description: created
+    get:
+      tags:
+        - param
+      summary: Retrieve the parameters
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/cbor:
+              schema:
+                $ref: '#/components/schemas/MatrixParams'
+
+components:
+  schemas:
+    MatrixParams:
+      type: object
+      properties:
+        id:
+          type: array
+          items:
+            type: number
+            format: float
+          example: [3.5, 9.3, 5, 1.7]
+        
