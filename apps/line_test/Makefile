@@ -2,7 +2,8 @@ APPLICATION = line_test
 # name of the application
 
 # If no BOARD is found in the environment, use this default:
-BOARD ?= arduino-nano-33-ble
+# BOARD ?= arduino-nano-33-ble
+BOARD ?= native
 
 # This has to be the absolute path to the TinyPART repo base directory:
 TINYPARTBASE ?= $(CURDIR)/../..

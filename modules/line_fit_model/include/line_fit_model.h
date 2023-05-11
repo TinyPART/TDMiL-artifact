@@ -17,7 +17,7 @@ public:
 
   std::vector<float> predict(std::vector<std::vector<float>> X);
 
-  std::tuple<std::size_t, float, float> train_SGD(SyntheticDataset &dataset);
+  std::tuple<std::size_t, float, float, float, float> train_SGD(SyntheticDataset &dataset);
 
   std::tuple<float, float> train_SGD2(SyntheticDataset &dataset);
 

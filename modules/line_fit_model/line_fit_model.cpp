@@ -61,7 +61,7 @@ std::vector<float> LineFitModel::predict(std::vector<std::vector<float>> X)
     return prediction;
 }
 
-std::tuple<size_t, float, float> LineFitModel::train_SGD(SyntheticDataset &dataset)
+std::tuple<size_t, float, float, float, float> LineFitModel::train_SGD(SyntheticDataset &dataset)
 {
     int features = dataset.get_features_count();
     std::vector<std::vector<float>> data_points = dataset.get_data_points();
@@ -110,7 +110,7 @@ std::tuple<size_t, float, float> LineFitModel::train_SGD(SyntheticDataset &datas
             LinearAlgebraUtil::subtract_vector(pW, LinearAlgebraUtil::multiply_vector_scalar(dW, learning_rate));
         this->pred_b = pB - learning_rate * dB;
 
-        if (iteration % 100== 0)
+        if (iteration % 100 == 0)
         {
             training_error = this->compute_mse(y, predict(X));
             printf("Iteration:%d and Training error: %f \n", iteration, training_error);
@@ -122,8 +122,8 @@ std::tuple<size_t, float, float> LineFitModel::train_SGD(SyntheticDataset &datas
         printf("m%d_local = %f \n", i, pred_weights[i]);
     }
     printf("b_local= %f \n \n", pred_b);
-    float accuracy = 1 / training_error;
-    return std::make_tuple(dataset.size(), training_error, accuracy);
+    // float accuracy = 1 / training_error;
+    return std::make_tuple(dataset.size(), pred_weights[0], pred_weights[1], pred_weights[2], pred_b);
 }
 
 float LineFitModel::compute_mse(std::vector<float> true_y, std::vector<float> pred)
