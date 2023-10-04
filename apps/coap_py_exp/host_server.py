@@ -9,7 +9,7 @@ import cbor2
 import numpy as np
 from aiocoap import Context, Message, GET, PUT
 
-# TODO: Clients could not do PUT request on other's behalf
+# TODO: Clients should not do PUT request on other's behalf
 # TODO: GET+observe only when new models are ready
 
 
@@ -55,18 +55,61 @@ class globalModel(resource.ObservableResource):
         self.W2 = np.random.random((self.output_shape, self.hidden_shape))
         self.b2 = np.random.random((self.output_shape))
         self.clients = 3
+        # initial weights
+        data_and_metadata = {
+            "model": [
+                self.W1.tolist(),
+                self.b1.tolist(),
+                self.W2.tolist(),
+                self.b2.tolist(),
+            ],
+            "metadata": {"round": "0"},
+        }
+
+        self.model = None
+        self.initial_data = cbor2.dumps(data_and_metadata)
+        self.payload = None
+        self.round = None
+
+    def set_content(self, content):
+        self.payload = content
+        deserialized_data = cbor2.loads(content)
+        # Access model data and metadata
+        model_data = deserialized_data.get("model", [])
+        metadata = deserialized_data.get("metadata", {})
+        self.model = model_data
+        print(np.array(model_data, dtype="object"))
+
+        # Access specific metadata fields
+        self.round = int(metadata.get("round", ""))
 
     async def render_get(self, request):
-        python_list = [
-            self.W1.tolist(),
-            self.b1.tolist(),
-            self.W2.tolist(),
-            self.b2.tolist(),
-        ]
+        round_param = None
+        for option in request.opt.uri_query:
+            if option.startswith("round="):
+                round_param = int(option.split("=")[1])
+                break
 
-        # Serialize the Python list to CBOR
-        self.serialized_data = cbor2.dumps(python_list)
-        return aiocoap.Message(payload=self.serialized_data)
+        if round_param is not None and round_param == self.round:
+            return aiocoap.Message(payload=self.payload)
+        else:
+            return aiocoap.Message(code=aiocoap.NOT_FOUND, payload=b"Round not found")
+
+    async def render_put(self, request):
+        round_param = None
+        for option in request.opt.uri_query:
+            if option.startswith("round="):
+                round_param = int(option.split("=")[1])
+                break
+
+        if round_param is not None:
+            if round_param == 0:
+                self.set_content(self.initial_data)
+            else:
+                self.set_content(request.payload)
+            return aiocoap.Message(code=aiocoap.CHANGED, payload=self.payload)
+        else:
+            return aiocoap.Message(code=aiocoap.NOT_FOUND, payload=b"Round not found")
 
 
 class localModelC1(resource.ObservableResource):
@@ -75,12 +118,12 @@ class localModelC1(resource.ObservableResource):
         self.input_shape = 10
         self.hidden_shape = 5
         self.output_shape = 3
-        self.content = None
+        self.model = None
         self.round = 0
         self.num_examples = 0
 
     def set_content(self, content):
-        self.content = content
+        self.model = content
         deserialized_data = cbor2.loads(content)
         # Access model data and metadata
         model_data = deserialized_data.get("model", [])
@@ -93,44 +136,117 @@ class localModelC1(resource.ObservableResource):
         self.num_examples = int(metadata.get("num_examples", ""))
 
     async def render_get(self, request):
-        return aiocoap.Message(payload=self.content)
+        return aiocoap.Message(payload=self.model)
 
     async def render_put(self, request):
         # print("PUT payload: %s" % request.payload)
         self.set_content(request.payload)
-        return aiocoap.Message(code=aiocoap.CHANGED, payload=self.content)
+        return aiocoap.Message(code=aiocoap.CHANGED, payload=self.model)
 
 
-class localModelC2(resource.ObservableResource):
-    def __init__(self):
+class localModel(resource.ObservableResource):
+    def __init__(self, client_id):
         super().__init__()
+        self.client_idx = client_id
         self.input_shape = 10
         self.hidden_shape = 5
         self.output_shape = 3
-        self.content = None
-        self.round = 0
+        self.model = None
+        self.round = None
         self.num_examples = 0
 
     def set_content(self, content):
-        self.content = content
+        self.model = content
         deserialized_data = cbor2.loads(content)
         # Access model data and metadata
         model_data = deserialized_data.get("model", [])
         metadata = deserialized_data.get("metadata", {})
 
         print(np.array(model_data, dtype="object"))
-
+        print(f"before:{self.round}")
         # Access specific metadata fields
         self.round = int(metadata.get("round", ""))
+        print(f"after:{self.round}")
         self.num_examples = int(metadata.get("num_examples", ""))
 
     async def render_get(self, request):
-        return aiocoap.Message(payload=self.content)
+        round_param = None
+        for option in request.opt.uri_query:
+            if option.startswith("round="):
+                round_param = int(option.split("=")[1])
+                break
+
+        if round_param is not None and round_param == self.round:
+            return aiocoap.Message(payload=self.model)
+        else:
+            return aiocoap.Message(code=aiocoap.NOT_FOUND, payload=b"Round not found")
 
     async def render_put(self, request):
-        # print("PUT payload: %s" % request.payload)
-        self.set_content(request.payload)
-        return aiocoap.Message(code=aiocoap.CHANGED, payload=self.content)
+        round_param = None
+        for option in request.opt.uri_query:
+            if option.startswith("round="):
+                round_param = int(option.split("=")[1])
+                break
+
+        if round_param is not None:
+            self.set_content(request.payload)
+            return aiocoap.Message(code=aiocoap.CHANGED, payload=self.model)
+        else:
+            return aiocoap.Message(code=aiocoap.NOT_FOUND, payload=b"Round not found")
+
+
+async def get_local_model_by_round(client_id, round_value):
+    uri = f"coap://localhost/local_model/c{client_id}?round={round_value}"
+
+    request = Message(code=GET, uri=uri)
+    context = await Context.create_client_context()
+    response = await context.request(request).response
+
+    if response.code.is_successful():
+        return response.payload
+    else:
+        return None
+
+
+async def update_local_model_by_round(client_id, round_value, new_data):
+    uri = f"coap://localhost/local_model/c{client_id}?round={round_value}"
+
+    request = Message(code=PUT, uri=uri, payload=new_data)
+    context = await Context.create_client_context()
+    response = await context.request(request).response
+    print(f"printing update code resp:{response}")
+
+    if response.code == aiocoap.CHANGED:
+        return True
+    else:
+        return False
+
+
+async def get_global_model_by_round(round_value):
+    uri = f"coap://localhost/global_model?round={round_value}"
+
+    request = Message(code=GET, uri=uri)
+    context = await Context.create_client_context()
+    response = await context.request(request).response
+
+    if response.code.is_successful():
+        return response.payload
+    else:
+        return None
+
+
+async def update_global_model_by_round(round_value, new_data):
+    uri = f"coap://localhost/global_model?round={round_value}"
+
+    request = Message(code=PUT, uri=uri, payload=new_data)
+    context = await Context.create_client_context()
+    response = await context.request(request).response
+    print(f"printing update code resp:{response}")
+
+    if response.code == aiocoap.CHANGED:
+        return True
+    else:
+        return False
 
 
 class localModelC3(resource.ObservableResource):
@@ -139,12 +255,12 @@ class localModelC3(resource.ObservableResource):
         self.input_shape = 10
         self.hidden_shape = 5
         self.output_shape = 3
-        self.content = None
+        self.model = None
         self.round = 0
         self.num_examples = 0
 
     def set_content(self, content):
-        self.content = content
+        self.model = content
         deserialized_data = cbor2.loads(content)
         # Access model data and metadata
         model_data = deserialized_data.get("model", [])
@@ -157,12 +273,12 @@ class localModelC3(resource.ObservableResource):
         self.num_examples = int(metadata.get("num_examples", ""))
 
     async def render_get(self, request):
-        return aiocoap.Message(payload=self.content)
+        return aiocoap.Message(payload=self.model)
 
     async def render_put(self, request):
         # print("PUT payload: %s" % request.payload)
         self.set_content(request.payload)
-        return aiocoap.Message(code=aiocoap.CHANGED, payload=self.content)
+        return aiocoap.Message(code=aiocoap.CHANGED, payload=self.model)
 
 
 # logging setup
@@ -181,9 +297,9 @@ async def main():
     root.add_resource(["time"], TimeResource())
 
     root.add_resource(["global_model"], globalModel())
-    root.add_resource(["local_model", "c1"], localModelC1())
-    root.add_resource(["local_model", "c2"], localModelC2())
-    root.add_resource(["local_model", "c3"], localModelC3())
+    root.add_resource(["local_model", "c1"], localModel(1))
+    root.add_resource(["local_model", "c2"], localModel(2))
+    root.add_resource(["local_model", "c3"], localModel(3))
 
     await aiocoap.Context.create_server_context(root)
 

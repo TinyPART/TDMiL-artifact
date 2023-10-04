@@ -37,7 +37,7 @@ async def main():
 
     serialized_data = cbor2.dumps(data_and_metadata)
     request = Message(
-        code=PUT, payload=serialized_data, uri="coap://localhost/local_model/c1"
+        code=PUT, payload=serialized_data, uri="coap://localhost/local_model/c1?round=1"
     )
 
     response = await context.request(request).response
