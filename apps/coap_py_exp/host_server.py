@@ -112,38 +112,6 @@ class globalModel(resource.ObservableResource):
             return aiocoap.Message(code=aiocoap.NOT_FOUND, payload=b"Round not found")
 
 
-class localModelC1(resource.ObservableResource):
-    def __init__(self):
-        super().__init__()
-        self.input_shape = 10
-        self.hidden_shape = 5
-        self.output_shape = 3
-        self.model = None
-        self.round = 0
-        self.num_examples = 0
-
-    def set_content(self, content):
-        self.model = content
-        deserialized_data = cbor2.loads(content)
-        # Access model data and metadata
-        model_data = deserialized_data.get("model", [])
-        metadata = deserialized_data.get("metadata", {})
-
-        print(np.array(model_data, dtype="object"))
-
-        # Access specific metadata fields
-        self.round = int(metadata.get("round", ""))
-        self.num_examples = int(metadata.get("num_examples", ""))
-
-    async def render_get(self, request):
-        return aiocoap.Message(payload=self.model)
-
-    async def render_put(self, request):
-        # print("PUT payload: %s" % request.payload)
-        self.set_content(request.payload)
-        return aiocoap.Message(code=aiocoap.CHANGED, payload=self.model)
-
-
 class localModel(resource.ObservableResource):
     def __init__(self, client_id):
         super().__init__()
@@ -247,38 +215,6 @@ async def update_global_model_by_round(round_value, new_data):
         return True
     else:
         return False
-
-
-class localModelC3(resource.ObservableResource):
-    def __init__(self):
-        super().__init__()
-        self.input_shape = 10
-        self.hidden_shape = 5
-        self.output_shape = 3
-        self.model = None
-        self.round = 0
-        self.num_examples = 0
-
-    def set_content(self, content):
-        self.model = content
-        deserialized_data = cbor2.loads(content)
-        # Access model data and metadata
-        model_data = deserialized_data.get("model", [])
-        metadata = deserialized_data.get("metadata", {})
-
-        print(np.array(model_data, dtype="object"))
-
-        # Access specific metadata fields
-        self.round = int(metadata.get("round", ""))
-        self.num_examples = int(metadata.get("num_examples", ""))
-
-    async def render_get(self, request):
-        return aiocoap.Message(payload=self.model)
-
-    async def render_put(self, request):
-        # print("PUT payload: %s" % request.payload)
-        self.set_content(request.payload)
-        return aiocoap.Message(code=aiocoap.CHANGED, payload=self.model)
 
 
 # logging setup
