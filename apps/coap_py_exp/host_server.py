@@ -233,9 +233,9 @@ async def main():
     root.add_resource(["time"], TimeResource())
 
     root.add_resource(["global_model"], globalModel())
+    root.add_resource(["local_model", "c0"], localModel(0))
     root.add_resource(["local_model", "c1"], localModel(1))
     root.add_resource(["local_model", "c2"], localModel(2))
-    root.add_resource(["local_model", "c3"], localModel(3))
 
     await aiocoap.Context.create_server_context(root)
 

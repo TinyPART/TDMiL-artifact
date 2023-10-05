@@ -4,7 +4,7 @@
 num_clients=3
 
 # Loop through clients
-for i in $(seq 1 $num_clients); do
+for i in $(seq 0 $((num_clients-1))); do
   script_name="client_c${i}.py"
 
   echo "Running $script_name..."

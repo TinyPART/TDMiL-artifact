@@ -5,12 +5,12 @@ import cbor2
 from aiocoap import Context, Message, GET, PUT
 
 logging.basicConfig(level=logging.INFO)
-
+#TODO argparse
 
 async def main():
     context = await Context.create_client_context()
 
-    await asyncio.sleep(1)
+    await asyncio.sleep(2)
     input_shape = 10
     hidden_shape = 5
     output_shape = 3
@@ -19,8 +19,9 @@ async def main():
     b1 = np.random.random((hidden_shape))
     W2 = np.random.random((output_shape, hidden_shape))
     # b2 = np.random.random((output_shape))
-    b2 = np.array([1, 3, 4], dtype=np.float32)
+    b2 = np.array([1, 1, 3], dtype=np.float32)
 
+    # Convert the NumPy array to a Python list
     data_and_metadata = {
         "model": [
             W1.tolist(),
@@ -36,7 +37,7 @@ async def main():
 
     serialized_data = cbor2.dumps(data_and_metadata)
     request = Message(
-        code=PUT, payload=serialized_data, uri="coap://localhost/local_model/c3?round=1"
+        code=PUT, payload=serialized_data, uri="coap://localhost/local_model/c0?round=1"
     )
 
     response = await context.request(request).response
