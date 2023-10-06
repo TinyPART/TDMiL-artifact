@@ -1,4 +1,3 @@
-import datetime
 import logging
 
 import asyncio
@@ -8,40 +7,10 @@ import aiocoap
 import cbor2
 import numpy as np
 from aiocoap import Context, Message, GET, PUT
+import argparse
 
 # TODO: Clients should not do PUT request on other's behalf
 # TODO: GET+observe only when new models are ready
-
-
-class TimeResource(resource.ObservableResource):
-    """Example resource that can be observed. The `notify` method keeps
-    scheduling itself, and calles `update_state` to trigger sending
-    notifications."""
-
-    def __init__(self):
-        super().__init__()
-
-        self.handle = None
-
-    def notify(self):
-        self.updated_state()
-        self.reschedule()
-
-    def reschedule(self):
-        self.handle = asyncio.get_event_loop().call_later(5, self.notify)
-
-    def update_observation_count(self, count):
-        if count and self.handle is None:
-            print("Starting the clock")
-            self.reschedule()
-        if count == 0 and self.handle:
-            print("Stopping the clock")
-            self.handle.cancel()
-            self.handle = None
-
-    async def render_get(self, request):
-        payload = datetime.datetime.now().strftime("%Y-%m-%d %H:%M").encode("ascii")
-        return aiocoap.Message(payload=payload)
 
 
 class globalModel(resource.ObservableResource):
@@ -93,7 +62,8 @@ class globalModel(resource.ObservableResource):
         if round_param is not None and round_param == self.round:
             return aiocoap.Message(payload=self.payload)
         else:
-            return aiocoap.Message(code=aiocoap.NOT_FOUND, payload=b"Round not found")
+            # TODO:not the best way to keep default as 2.05
+            return aiocoap.Message(code=aiocoap.CONTENT, payload=b"Round not found")
 
     async def render_put(self, request):
         round_param = None
@@ -109,7 +79,8 @@ class globalModel(resource.ObservableResource):
                 self.set_content(request.payload)
             return aiocoap.Message(code=aiocoap.CHANGED, payload=self.payload)
         else:
-            return aiocoap.Message(code=aiocoap.NOT_FOUND, payload=b"Round not found")
+            # TODO:not the best way to keep default as 2.05
+            return aiocoap.Message(code=aiocoap.CONTENT, payload=b"Round not found")
 
 
 class localModel(resource.ObservableResource):
@@ -122,6 +93,11 @@ class localModel(resource.ObservableResource):
         self.model = None
         self.round = None
         self.num_examples = 0
+        self.handle = None
+        # self.notify()
+
+    def notify(self):
+        self.updated_state()
 
     def set_content(self, content):
         self.model = content
@@ -136,6 +112,7 @@ class localModel(resource.ObservableResource):
         self.round = int(metadata.get("round", ""))
         print(f"after:{self.round}")
         self.num_examples = int(metadata.get("num_examples", ""))
+        self.notify()
 
     async def render_get(self, request):
         round_param = None
@@ -147,7 +124,8 @@ class localModel(resource.ObservableResource):
         if round_param is not None and round_param == self.round:
             return aiocoap.Message(payload=self.model)
         else:
-            return aiocoap.Message(code=aiocoap.NOT_FOUND, payload=b"Round not found")
+            # TODO:not the best way to keep default as 2.05
+            return aiocoap.Message(code=aiocoap.CONTENT, payload=b"Round not found")
 
     async def render_put(self, request):
         round_param = None
@@ -160,7 +138,8 @@ class localModel(resource.ObservableResource):
             self.set_content(request.payload)
             return aiocoap.Message(code=aiocoap.CHANGED, payload=self.model)
         else:
-            return aiocoap.Message(code=aiocoap.NOT_FOUND, payload=b"Round not found")
+            # TODO:not the best way to keep default as 2.05
+            return aiocoap.Message(code=aiocoap.CONTENT, payload=b"Round not found")
 
 
 async def get_local_model_by_round(client_id, round_value):
@@ -223,19 +202,17 @@ logging.basicConfig(level=logging.INFO)
 logging.getLogger("coap-server").setLevel(logging.DEBUG)
 
 
-async def main():
+async def main(num_clients):
     # Resource tree creation
     root = resource.Site()
 
     root.add_resource(
         [".well-known", "core"], resource.WKCResource(root.get_resources_as_linkheader)
     )
-    root.add_resource(["time"], TimeResource())
 
     root.add_resource(["global_model"], globalModel())
-    root.add_resource(["local_model", "c0"], localModel(0))
-    root.add_resource(["local_model", "c1"], localModel(1))
-    root.add_resource(["local_model", "c2"], localModel(2))
+    for client_idx in range(num_clients):
+        root.add_resource(["local_model", f"c_{client_idx}"], localModel(client_idx))
 
     await aiocoap.Context.create_server_context(root)
 
@@ -244,4 +221,14 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    parser = argparse.ArgumentParser(description="Asynchronous Client with Argument")
+
+    # Add an argument for client_idx
+    parser.add_argument(
+        "--num_clients", type=int, help="Number of the total clients", required=True
+    )
+
+    # Parse the command-line arguments
+    args = parser.parse_args()
+
+    asyncio.run(main(args.num_clients))

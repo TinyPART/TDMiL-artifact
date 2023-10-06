@@ -4,14 +4,15 @@ import numpy as np
 import cbor2
 from aiocoap import Context, Message, GET, PUT
 from host_server import update_local_model_by_round
+import argparse
 
 logging.basicConfig(level=logging.INFO)
 
 
-async def main():
+async def main(client_idx, round=1):
     context = await Context.create_client_context()
 
-    await asyncio.sleep(15)
+    await asyncio.sleep(1)
     input_shape = 10
     hidden_shape = 5
     output_shape = 3
@@ -20,7 +21,7 @@ async def main():
     b1 = np.random.random((hidden_shape))
     W2 = np.random.random((output_shape, hidden_shape))
     # b2 = np.random.random((output_shape))
-    b2 = np.array([1, 3, 3], dtype=np.float32)
+    b2 = np.array([1, 2, int(client_idx)], dtype=np.float32)
 
     # Convert the NumPy array to a Python list
     data_and_metadata = {
@@ -31,14 +32,16 @@ async def main():
             b2.tolist(),
         ],
         "metadata": {
-            "round": "1",
+            "round": str(round),
             "num_examples": "100",
         },
     }
 
     serialized_data = cbor2.dumps(data_and_metadata)
     request = Message(
-        code=PUT, payload=serialized_data, uri="coap://localhost/local_model/c1?round=1"
+        code=PUT,
+        payload=serialized_data,
+        uri=f"coap://localhost/local_model/c_{client_idx}?round={round}",
     )
 
     response = await context.request(request).response
@@ -46,7 +49,7 @@ async def main():
     print("Result: %s\n%r" % (response.code, response.payload))
 
 
-async def second_function():
+async def second_function(client_idx, round=1):
     input_shape = 10
     hidden_shape = 5
     output_shape = 3
@@ -56,7 +59,6 @@ async def second_function():
     W2 = np.random.random((output_shape, hidden_shape))
     # b2 = np.random.random((output_shape))
     b2 = np.array([1, 3, 3], dtype=np.float32)
-    round = 1
 
     # Convert the NumPy array to a Python list
     data_and_metadata = {
@@ -67,12 +69,13 @@ async def second_function():
             b2.tolist(),
         ],
         "metadata": {
-            "round": "1",
+            "round": str(round),
             "num_examples": "100",
         },
     }
-    serialized_data = cbor2.dumps(data_and_metadata)
-    success = await update_local_model_by_round(2, round, serialized_data)
+    # serialized_data = cbor2.dumps(data_and_metadata)
+    serialized_data = cbor2.dumps(b"data_and_metadata")
+    success = await update_local_model_by_round(client_idx, round, serialized_data)
 
     if success:
         print(f"local model updated for round: {round}")
@@ -81,5 +84,15 @@ async def second_function():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
-    # asyncio.run(second_function())
+    parser = argparse.ArgumentParser(description="Asynchronous Client with Argument")
+
+    # Add an argument for client_idx
+    parser.add_argument(
+        "--client_idx", "-cid", type=int, help="Index of the client", required=True
+    )
+
+    # Parse the command-line arguments
+    args = parser.parse_args()
+
+    asyncio.run(main(args.client_idx))
+    # asyncio.run(second_function(args.client_idx))
