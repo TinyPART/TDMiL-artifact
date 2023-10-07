@@ -3,13 +3,20 @@ import asyncio
 import numpy as np
 import cbor2
 from aiocoap import Context, Message, GET, PUT
-from host_server import update_local_model_by_round
+from host_server import update_local_model_by_round, get_global_model_by_round
 import argparse
 
 logging.basicConfig(level=logging.INFO)
 
 
 async def main(client_idx, round=1):
+    # read from (round -1) model from server
+
+    success = await get_global_model_by_round(round - 1)
+    if success:
+        print(f"read global model from round: {round-1}")
+    else:
+        print(f"failed reading global model from round: {round-1}")
     context = await Context.create_client_context()
 
     await asyncio.sleep(1)
@@ -34,6 +41,7 @@ async def main(client_idx, round=1):
         "metadata": {
             "round": str(round),
             "num_examples": "100",
+            "client_id": str(client_idx),
         },
     }
 
@@ -46,7 +54,8 @@ async def main(client_idx, round=1):
 
     response = await context.request(request).response
 
-    print("Result: %s\n%r" % (response.code, response.payload))
+    # print("Result: %s\n%r" % (response.code, response.payload))
+    print(f"Result: {response.code}")
 
 
 async def second_function(client_idx, round=1):
@@ -90,9 +99,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--client_idx", "-cid", type=int, help="Index of the client", required=True
     )
+    parser.add_argument("--round_num", "-round", type=int, help="Round of the client")
 
     # Parse the command-line arguments
     args = parser.parse_args()
 
-    asyncio.run(main(args.client_idx))
+    asyncio.run(main(args.client_idx, args.round_num))
     # asyncio.run(second_function(args.client_idx))

@@ -23,7 +23,7 @@ class globalModel(resource.ObservableResource):
         self.b1 = np.random.random((self.hidden_shape))
         self.W2 = np.random.random((self.output_shape, self.hidden_shape))
         self.b2 = np.random.random((self.output_shape))
-        self.clients = 3
+        # self.clients = 3
         # initial weights
         data_and_metadata = {
             "model": [
@@ -40,6 +40,9 @@ class globalModel(resource.ObservableResource):
         self.payload = None
         self.round = None
 
+    def notify(self):
+        self.updated_state()
+
     def set_content(self, content):
         self.payload = content
         deserialized_data = cbor2.loads(content)
@@ -51,6 +54,7 @@ class globalModel(resource.ObservableResource):
 
         # Access specific metadata fields
         self.round = int(metadata.get("round", ""))
+        self.notify()
 
     async def render_get(self, request):
         round_param = None
@@ -93,14 +97,16 @@ class localModel(resource.ObservableResource):
         self.model = None
         self.round = None
         self.num_examples = 0
-        self.handle = None
+        self.payload = None
+
+        # self.handle = None
         # self.notify()
 
     def notify(self):
         self.updated_state()
 
     def set_content(self, content):
-        self.model = content
+        self.payload = content
         deserialized_data = cbor2.loads(content)
         # Access model data and metadata
         model_data = deserialized_data.get("model", [])
@@ -122,7 +128,7 @@ class localModel(resource.ObservableResource):
                 break
 
         if round_param is not None and round_param == self.round:
-            return aiocoap.Message(payload=self.model)
+            return aiocoap.Message(payload=self.payload)
         else:
             # TODO:not the best way to keep default as 2.05
             return aiocoap.Message(code=aiocoap.CONTENT, payload=b"Round not found")
@@ -136,14 +142,14 @@ class localModel(resource.ObservableResource):
 
         if round_param is not None:
             self.set_content(request.payload)
-            return aiocoap.Message(code=aiocoap.CHANGED, payload=self.model)
+            return aiocoap.Message(code=aiocoap.CHANGED, payload=self.payload)
         else:
             # TODO:not the best way to keep default as 2.05
             return aiocoap.Message(code=aiocoap.CONTENT, payload=b"Round not found")
 
 
 async def get_local_model_by_round(client_id, round_value):
-    uri = f"coap://localhost/local_model/c{client_id}?round={round_value}"
+    uri = f"coap://localhost/local_model/c_{client_id}?round={round_value}"
 
     request = Message(code=GET, uri=uri)
     context = await Context.create_client_context()
@@ -156,7 +162,7 @@ async def get_local_model_by_round(client_id, round_value):
 
 
 async def update_local_model_by_round(client_id, round_value, new_data):
-    uri = f"coap://localhost/local_model/c{client_id}?round={round_value}"
+    uri = f"coap://localhost/local_model/c_{client_id}?round={round_value}"
 
     request = Message(code=PUT, uri=uri, payload=new_data)
     context = await Context.create_client_context()
@@ -225,7 +231,7 @@ if __name__ == "__main__":
 
     # Add an argument for client_idx
     parser.add_argument(
-        "--num_clients", type=int, help="Number of the total clients", required=True
+        "--num_clients", type=int, help="Number of the total clients", default=10
     )
 
     # Parse the command-line arguments
