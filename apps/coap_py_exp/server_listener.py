@@ -37,7 +37,7 @@ def run_commands_in_parallel(num_clients, curr_round):
 
 
 async def fetch_server_data(protocol, curr_round):
-    uri = f"coap://localhost/global_model?round={curr_round}"
+    uri = f"coaps://localhost/global_model?round={curr_round}"
     request = Message(code=GET, uri=uri, observe=0)
 
     protocol_request = protocol.request(request)
@@ -61,6 +61,16 @@ async def fetch_server_data(protocol, curr_round):
 
 async def main(total_rounds):
     protocol = await Context.create_client_context()
+    protocol.client_credentials.load_from_dict(
+        {
+            "coaps://localhost/global_model*": {
+                "dtls": {
+                    "psk": b"serverPSK",
+                    "client-identity": b"server_Identity",
+                }
+            }
+        }
+    )
     for r in range(total_rounds):
         local_round = await fetch_server_data(protocol, r)
         round_to_agg = local_round
@@ -69,5 +79,15 @@ async def main(total_rounds):
 if __name__ == "__main__":
     num_clients = 10
     threshold = 6
-    total_rounds = 15
-    asyncio.run(main(total_rounds))
+    total_rounds = 2
+    # try:
+    #     asyncio.run(main(total_rounds))
+    # finally:
+    #     # Code to close resources after asyncio.run completes
+    #     loop = asyncio.get_event_loop()
+    #     loop.close()
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(main(total_rounds))
+    finally:
+        loop.close()

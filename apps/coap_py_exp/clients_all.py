@@ -18,8 +18,17 @@ async def main(client_idx, round=1):
     else:
         print(f"failed reading global model from round: {round-1}")
     context = await Context.create_client_context()
-
-    await asyncio.sleep(1)
+    context.client_credentials.load_from_dict(
+        {
+            "coaps://localhost/local_model/*": {
+                "dtls": {
+                    "psk": b"secretPSK",
+                    "client-identity": b"client_Identity",
+                }
+            }
+        }
+    )
+    await asyncio.sleep(40 - client_idx)
     input_shape = 10
     hidden_shape = 5
     output_shape = 3
@@ -49,7 +58,7 @@ async def main(client_idx, round=1):
     request = Message(
         code=PUT,
         payload=serialized_data,
-        uri=f"coap://localhost/local_model/c_{client_idx}?round={round}",
+        uri=f"coaps://localhost/local_model/c_{client_idx}?round={round}",
     )
 
     response = await context.request(request).response

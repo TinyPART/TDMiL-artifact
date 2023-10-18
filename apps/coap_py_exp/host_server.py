@@ -149,10 +149,20 @@ class localModel(resource.ObservableResource):
 
 
 async def get_local_model_by_round(client_id, round_value):
-    uri = f"coap://localhost/local_model/c_{client_id}?round={round_value}"
+    uri = f"coaps://localhost/local_model/c_{client_id}?round={round_value}"
 
     request = Message(code=GET, uri=uri)
     context = await Context.create_client_context()
+    context.client_credentials.load_from_dict(
+        {
+            "coaps://localhost/local_model/*": {
+                "dtls": {
+                    "psk": b"secretPSK",
+                    "client-identity": b"client_Identity",
+                }
+            }
+        }
+    )
     response = await context.request(request).response
 
     if response.code.is_successful():
@@ -162,10 +172,20 @@ async def get_local_model_by_round(client_id, round_value):
 
 
 async def update_local_model_by_round(client_id, round_value, new_data):
-    uri = f"coap://localhost/local_model/c_{client_id}?round={round_value}"
+    uri = f"coaps://localhost/local_model/c_{client_id}?round={round_value}"
 
     request = Message(code=PUT, uri=uri, payload=new_data)
     context = await Context.create_client_context()
+    context.client_credentials.load_from_dict(
+        {
+            "coaps://localhost/local_model/*": {
+                "dtls": {
+                    "psk": b"secretPSK",
+                    "client-identity": b"client_Identity",
+                }
+            }
+        }
+    )
     response = await context.request(request).response
     print(f"printing update code resp:{response}")
 
@@ -176,10 +196,20 @@ async def update_local_model_by_round(client_id, round_value, new_data):
 
 
 async def get_global_model_by_round(round_value):
-    uri = f"coap://localhost/global_model?round={round_value}"
+    uri = f"coaps://localhost/global_model?round={round_value}"
 
     request = Message(code=GET, uri=uri)
     context = await Context.create_client_context()
+    context.client_credentials.load_from_dict(
+        {
+            "coaps://localhost/global_model*": {
+                "dtls": {
+                    "psk": b"serverPSK",
+                    "client-identity": b"server_Identity",
+                }
+            }
+        }
+    )
     response = await context.request(request).response
 
     if response.code.is_successful():
@@ -189,10 +219,20 @@ async def get_global_model_by_round(round_value):
 
 
 async def update_global_model_by_round(round_value, new_data):
-    uri = f"coap://localhost/global_model?round={round_value}"
+    uri = f"coaps://localhost/global_model?round={round_value}"
 
     request = Message(code=PUT, uri=uri, payload=new_data)
     context = await Context.create_client_context()
+    context.client_credentials.load_from_dict(
+        {
+            "coaps://localhost/global_model*": {
+                "dtls": {
+                    "psk": b"serverPSK",
+                    "client-identity": b"server_Identity",
+                }
+            }
+        }
+    )
     response = await context.request(request).response
     print(f"printing update code resp:{response}")
 
@@ -220,7 +260,25 @@ async def main(num_clients):
     for client_idx in range(num_clients):
         root.add_resource(["local_model", f"c_{client_idx}"], localModel(client_idx))
 
-    await aiocoap.Context.create_server_context(root)
+    server_context = await aiocoap.Context.create_server_context(
+        root, bind=("::1", 5683)
+    )
+    server_context.server_credentials.load_from_dict(
+        {
+            ":client": {
+                "dtls": {
+                    "psk": b"secretPSK",
+                    "client-identity": b"client_Identity",
+                }
+            },
+            ":server": {
+                "dtls": {
+                    "psk": b"serverPSK",
+                    "client-identity": b"server_Identity",
+                }
+            }
+        }
+    )
 
     # Run forever
     await asyncio.get_running_loop().create_future()

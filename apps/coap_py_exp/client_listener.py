@@ -11,7 +11,7 @@ from host_server import update_global_model_by_round
 
 
 async def fetch_client_data(client_idx, results, protocol, round_to_agg):
-    uri = f"coap://localhost/local_model/c_{client_idx}?round={round_to_agg}"
+    uri = f"coaps://localhost/local_model/c_{client_idx}?round={round_to_agg}"
     request = Message(code=GET, uri=uri, observe=0)
     # listen for an update on client's endpoint
     try:
@@ -48,6 +48,16 @@ async def main(num_rounds):
     for r in range(1, num_rounds):
         results = []
         protocol = await Context.create_client_context()
+        protocol.client_credentials.load_from_dict(
+            {
+                "coaps://localhost/local_model/*": {
+                    "dtls": {
+                        "psk": b"secretPSK",
+                        "client-identity": b"client_Identity",
+                    }
+                }
+            }
+        )
 
         # local_round = await fetch_server_data(protocol, r)
         # round_to_agg = local_round
@@ -98,5 +108,15 @@ async def main(num_rounds):
 if __name__ == "__main__":
     num_clients = 10
     threshold = 6
-    total_rounds = 15
-    asyncio.run(main(total_rounds))
+    total_rounds = 2
+    # try:
+    #     asyncio.run(main(total_rounds))
+
+    # finally:
+    #     loop = asyncio.get_event_loop()
+    #     loop.close()
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(main(total_rounds))
+    finally:
+        loop.close()
