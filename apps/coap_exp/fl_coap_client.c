@@ -60,12 +60,10 @@ static void _local_model_obs_resp_handler(const gcoap_request_memo_t *memo, coap
     (void)memo;
     (void)pdu;
     (void)remote;
-    fl_coap_client_ctx_t *ctx = memo->context;
     switch (memo->state) {
         case GCOAP_MEMO_TIMEOUT:
         case GCOAP_MEMO_ERR:
         case GCOAP_MEMO_RESP_TRUNC:
-            ctx->state = FL_COAP_CLIENT_FAILED;
             DEBUG("[fl_client]: Error transmitting request\n");
             break;
         case GCOAP_MEMO_RESP:
@@ -107,9 +105,9 @@ ssize_t _send_global_model_observe(const sock_udp_ep_t *remote, uint32_t round)
     coap_pkt_t pdu;
     gcoap_req_init(&pdu, buf, FL_CLIENT_PDU_BUF_SIZE, COAP_METHOD_GET, NULL);
     /* Add observer */
-    uint32_t now = ztimer_now(ZTIMER_USEC);
-    pdu.observe_value = (now >> GCOAP_OBS_TICK_EXPONENT) & 0xFFFFFF;
-    coap_opt_add_uint(&pdu, COAP_OPT_OBSERVE, pdu.observe_value);
+    //uint32_t now = ztimer_now(ZTIMER_USEC);
+    //pdu.observe_value = (now >> GCOAP_OBS_TICK_EXPONENT) & 0xFFFFFF;
+    coap_opt_add_uint(&pdu, COAP_OPT_OBSERVE, 0);
     coap_opt_add_uri_path(&pdu, uri_global_model);
     coap_opt_add_format(&pdu, COAP_FORMAT_CBOR);
 
