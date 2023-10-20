@@ -10,7 +10,7 @@ from aiocoap import Context, Message, GET, PUT
 import argparse
 
 # TODO: Clients should not do PUT request on other's behalf
-# TODO: GET+observe only when new models are ready
+# export AIOCOAP_DTLSSERVER_ENABLED=1 
 
 
 class globalModel(resource.ObservableResource):
