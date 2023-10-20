@@ -37,7 +37,24 @@ typedef struct {
     const fl_local_model_metadata_t *metadata;
 } fl_coap_client_ctx_t;
 
+/**
+ * @brief Start transfer of the local model to the server
+ *
+ * This call starts an async transfer of the local model data to the server. The metadata and
+ * context struct pointers must remain valid throughout the full CoAP
+ *
+ * @param   remote      Sock UDP endpoint to the remote server
+ * @param   metadata    Struct with the metadata to include in the CBOR payload
+ * @param   ctx         Context struct for the full transfer
+ */
 void fl_coap_submit_local_model_async(const sock_udp_ep_t *remote, const fl_local_model_metadata_t *metadata, fl_coap_client_ctx_t *ctx);
+
+/**
+ * @brief Start the observe subscription on the server for the global model
+ *
+ * @param   remote      Sock UDP endpoint to the remote server
+ * @param   round       Round number to observe
+ */
 void fl_coap_start_global_model_observe(const sock_udp_ep_t *remote, uint32_t round);
 #ifdef __cplusplus
 }
