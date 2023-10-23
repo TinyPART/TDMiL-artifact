@@ -5,12 +5,25 @@ import asyncio
 import aiocoap.resource as resource
 import aiocoap
 import cbor2
+import urllib.parse
 import numpy as np
 from aiocoap import Context, Message, GET, PUT
 import argparse
 
 # TODO: Clients should not do PUT request on other's behalf
 # export AIOCOAP_DTLSSERVER_ENABLED=1
+
+CONTENT_FORMAT_CBOR = 60
+DTLS = {
+    "psk": b"secretPSK",
+    "client-identity": b"client_Identity",
+}
+
+
+def construct_url(host, resource='', query_string=''):
+    parts = urllib.parse.urlparse(host)
+    parts = parts._replace(path=resource, query=query_string)
+    return urllib.parse.urlunparse(parts)
 
 
 class globalModel(resource.ObservableResource):
@@ -20,9 +33,9 @@ class globalModel(resource.ObservableResource):
         self.hidden_shape = 5
         self.output_shape = 3
         self.W1 = np.random.random((self.hidden_shape, self.input_shape))
-        self.b1 = np.random.random((self.hidden_shape))
+        self.b1 = np.random.random(self.hidden_shape)
         self.W2 = np.random.random((self.output_shape, self.hidden_shape))
-        self.b2 = np.random.random((self.output_shape))
+        self.b2 = np.random.random(self.output_shape)
         # self.clients = 3
         # initial weights
         data_and_metadata = {
@@ -64,7 +77,8 @@ class globalModel(resource.ObservableResource):
                 break
 
         if round_param is not None and round_param == self.round:
-            return aiocoap.Message(payload=self.payload)
+            return aiocoap.Message(payload=self.payload,
+                                   content_format=CONTENT_FORMAT_CBOR)
         else:
             # TODO:not the best way to keep default as 2.05
             return aiocoap.Message(code=aiocoap.CONTENT, payload=b"Round not found")
@@ -81,7 +95,8 @@ class globalModel(resource.ObservableResource):
                 self.set_content(self.initial_data)
             else:
                 self.set_content(request.payload)
-            return aiocoap.Message(code=aiocoap.CHANGED, payload=self.payload)
+            return aiocoap.Message(code=aiocoap.CHANGED, payload=self.payload,
+                                   content_format=CONTENT_FORMAT_CBOR)
         else:
             # TODO:not the best way to keep default as 2.05
             return aiocoap.Message(code=aiocoap.CONTENT, payload=b"Round not found")
@@ -128,7 +143,8 @@ class localModel(resource.ObservableResource):
                 break
 
         if round_param is not None and round_param == self.round:
-            return aiocoap.Message(payload=self.payload)
+            return aiocoap.Message(payload=self.payload,
+                                   content_format=CONTENT_FORMAT_CBOR)
         else:
             # TODO:not the best way to keep default as 2.05
             return aiocoap.Message(code=aiocoap.CONTENT, payload=b"Round not found")
@@ -148,18 +164,16 @@ class localModel(resource.ObservableResource):
             return aiocoap.Message(code=aiocoap.CONTENT, payload=b"Round not found")
 
 
-async def get_local_model_by_round(client_id, round_value):
-    uri = f"coaps://localhost/local_model/c_{client_id}?round={round_value}"
+async def get_local_model_by_round(host, client_id, round_value):
+    uri = construct_url(host, f"/local_model/c_{client_id}", f"round={round_value}")
+    dtls_match = construct_url(host, "/local_model/*")
 
     request = Message(code=GET, uri=uri)
     context = await Context.create_client_context()
     context.client_credentials.load_from_dict(
         {
-            "coaps://localhost/local_model/*": {
-                "dtls": {
-                    "psk": b"secretPSK",
-                    "client-identity": b"client_Identity",
-                }
+            dtls_match: {
+                "dtls": DTLS,
             }
         }
     )
@@ -171,18 +185,17 @@ async def get_local_model_by_round(client_id, round_value):
         return None
 
 
-async def update_local_model_by_round(client_id, round_value, new_data):
-    uri = f"coaps://localhost/local_model/c_{client_id}?round={round_value}"
+async def update_local_model_by_round(host, client_id, round_value, new_data):
+    uri = construct_url(host, f"/local_model/c_{client_id}", f"round={round_value}")
+    dtls_match = construct_url(host, "/local_model/*")
 
-    request = Message(code=PUT, uri=uri, payload=new_data)
+    request = Message(code=PUT, uri=uri, payload=new_data,
+                      content_format=CONTENT_FORMAT_CBOR)
     context = await Context.create_client_context()
     context.client_credentials.load_from_dict(
         {
-            "coaps://localhost/local_model/*": {
-                "dtls": {
-                    "psk": b"secretPSK",
-                    "client-identity": b"client_Identity",
-                }
+            dtls_match: {
+                "dtls": DTLS,
             }
         }
     )
@@ -195,18 +208,16 @@ async def update_local_model_by_round(client_id, round_value, new_data):
         return False
 
 
-async def get_global_model_by_round(round_value):
-    uri = f"coaps://localhost/global_model?round={round_value}"
+async def get_global_model_by_round(host, round_value):
+    uri = construct_url(host, f"/global_model", f"round={round_value}")
+    dtls_match = construct_url(host, "/global_model*")
 
     request = Message(code=GET, uri=uri)
     context = await Context.create_client_context()
     context.client_credentials.load_from_dict(
         {
-            "coaps://localhost/global_model*": {
-                "dtls": {
-                    "psk": b"serverPSK",
-                    "client-identity": b"server_Identity",
-                }
+            dtls_match: {
+                "dtls": DTLS,
             }
         }
     )
@@ -218,18 +229,17 @@ async def get_global_model_by_round(round_value):
         return None
 
 
-async def update_global_model_by_round(round_value, new_data):
-    uri = f"coaps://localhost/global_model?round={round_value}"
+async def update_global_model_by_round(host, round_value, new_data):
+    uri = construct_url(host, f"/global_model", f"round={round_value}")
+    dtls_match = construct_url(host, "/global_model*")
 
-    request = Message(code=PUT, uri=uri, payload=new_data)
+    request = Message(code=PUT, uri=uri, payload=new_data,
+                      content_format=CONTENT_FORMAT_CBOR)
     context = await Context.create_client_context()
     context.client_credentials.load_from_dict(
         {
-            "coaps://localhost/global_model*": {
-                "dtls": {
-                    "psk": b"serverPSK",
-                    "client-identity": b"server_Identity",
-                }
+            dtls_match: {
+                "dtls": DTLS,
             }
         }
     )
