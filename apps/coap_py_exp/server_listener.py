@@ -13,7 +13,7 @@ import concurrent
 import argparse
 
 
-def run_command(idx, curr_round):
+def run_command(host, idx, curr_round):
     try:
         subprocess.run(
             [
@@ -23,6 +23,8 @@ def run_command(idx, curr_round):
                 f"{idx}",
                 "-round",
                 f"{curr_round+1}",
+                "--host",
+                f"{host}",
             ],
             check=True,
         )
@@ -33,10 +35,10 @@ def run_command(idx, curr_round):
         return f"Error running script {idx}: {e}. Make sure 'python' is in your system's PATH."
 
 
-def run_commands_in_parallel(num_client: int, curr_round: int):
+def run_commands_in_parallel(num_client: int, curr_round: int, host):
     with concurrent.futures.ThreadPoolExecutor() as executor:
         for idx in range(num_client):
-            executor.submit(run_command, idx, curr_round)
+            executor.submit(run_command, host, idx, curr_round)
 
 
 async def fetch_server_data(protocol, curr_round, host):
@@ -58,7 +60,7 @@ async def fetch_server_data(protocol, curr_round, host):
         metadata = deserialized_data.get("metadata", {})
         round_num = int(metadata.get("round", ""))
         # notify all clients to do training
-        run_commands_in_parallel(num_clients, curr_round)
+        run_commands_in_parallel(num_clients, curr_round, host)
         return round_num + 1
 
 

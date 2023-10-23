@@ -3,28 +3,26 @@ import asyncio
 import numpy as np
 import cbor2
 from aiocoap import Context, Message, GET, PUT
-from host_server import update_local_model_by_round, get_global_model_by_round
+from host_server import update_local_model_by_round, get_global_model_by_round, construct_url, DTLS
 import argparse
 
 logging.basicConfig(level=logging.INFO)
 
 
-async def main(client_idx, round=1):
+async def main(host, client_idx, round=1):
     # read from (round -1) model from server
 
-    success = await get_global_model_by_round(round - 1)
+    success = await get_global_model_by_round(host, round - 1)
     if success:
         print(f"read global model from round: {round-1}")
     else:
         print(f"failed reading global model from round: {round-1}")
+    dtls_match = construct_url(host, "/local_model/*")
     context = await Context.create_client_context()
     context.client_credentials.load_from_dict(
         {
             "coaps://localhost/local_model/*": {
-                "dtls": {
-                    "psk": b"secretPSK",
-                    "client-identity": b"client_Identity",
-                }
+                "dtls": DTLS,
             }
         }
     )
@@ -55,10 +53,11 @@ async def main(client_idx, round=1):
     }
 
     serialized_data = cbor2.dumps(data_and_metadata)
+    uri = construct_url(host, f"/local_model/c_{client_idx}", f"round={round}")
     request = Message(
         code=PUT,
         payload=serialized_data,
-        uri=f"coaps://localhost/local_model/c_{client_idx}?round={round}",
+        uri=uri,
     )
 
     response = await context.request(request).response
@@ -108,10 +107,15 @@ if __name__ == "__main__":
     parser.add_argument(
         "--client_idx", "-cid", type=int, help="Index of the client", required=True
     )
+    parser.add_argument(
+        "--host",
+        default="coaps://localhost/",
+        help="Specify the address to connect to the server",
+    )
     parser.add_argument("--round_num", "-round", type=int, help="Round of the client")
 
     # Parse the command-line arguments
     args = parser.parse_args()
 
-    asyncio.run(main(args.client_idx, args.round_num))
+    asyncio.run(main(args.host, args.client_idx, args.round_num))
     # asyncio.run(second_function(args.client_idx))
