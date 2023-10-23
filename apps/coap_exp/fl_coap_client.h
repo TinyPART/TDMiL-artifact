@@ -31,10 +31,13 @@ typedef enum {
     FL_COAP_CLIENT_FAILED,
 } fl_coap_client_state_t;
 
+/**
+ * @brief Federated learning CoAP client state
+ */
 typedef struct {
-    uint32_t block_num;
-    fl_coap_client_state_t state;
-    const fl_local_model_metadata_t *metadata;
+    uint32_t block_num;                         /**< Current block number */
+    fl_coap_client_state_t state;               /**< Client state */
+    const fl_local_model_metadata_t *metadata;  /**< Local metadata to encode */
 } fl_coap_client_ctx_t;
 
 /**

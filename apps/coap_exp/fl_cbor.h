@@ -28,23 +28,43 @@ extern "C" {
 #define FL_CBOR_METADATA_KEY_VALIDATION_ACCURACY    "validation_accuracy"
 #define FL_CBOR_METADATA_KEY_COMPLETED_EPOCHS       "completed_epochs"
 
+/**
+ * @brief Global metadata send with the model itself
+ */
 typedef struct {
-    uint32_t round;
-    uint32_t total_round;
-    uint32_t local_total_epochs;
+    uint32_t round;             /**< Round number for this model */
+    uint32_t total_round;       /**< Total number of rounds */
+    uint32_t local_total_epochs;    /**< Local total epochs */
 } fl_global_model_metadata_t;
 
+/**
+ * @brief Local model metadata send with the model
+ */
 typedef struct {
-    uint32_t round;
-    uint32_t num_examples;
-    float validation_loss;
-    float validation_accuracy;
-    uint32_t completed_epochs;
+    uint32_t round;             /**< Round number of the model  */
+    uint32_t num_examples;      /**< Number of examples         */
+    float validation_loss;      /**< Validation loss of the local model */
+    float validation_accuracy;  /**< Validation accuracy of the local model */
+    uint32_t completed_epochs;  /**< Number of epochs completed */
 } fl_local_model_metadata_t;
 
+/**
+ * @brief Encode a global model's metadata as cbor structure
+ *
+ * @param enc       NanoCBOR encoder context
+ * @param global    Global metadata reference to encode
+ */
 void fl_cbor_encode_global_model_metadata(nanocbor_encoder_t *enc, const fl_global_model_metadata_t *global);
 int fl_cbor_decode_global_model_metadata(nanocbor_value_t *val, fl_global_model_metadata_t *global);
+
+/**
+ * @brief Encode a local model's metadata as cbor structure
+ *
+ * @param enc       NanoCBOR encoder context
+ * @param global    local metadata reference to encode
+ */
 void fl_cbor_encode_local_model_metadata(nanocbor_encoder_t *enc, const fl_local_model_metadata_t *local);
+
 #ifdef __cplusplus
 }
 #endif
