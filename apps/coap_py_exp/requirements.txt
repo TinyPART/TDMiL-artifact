@@ -1,0 +1,15 @@
+aiocoap @ git+https://github.com/chrysn/aiocoap@dd7dbd113650289ddc2f3328854179dab88d2f1a
+cbor-diag==1.0.1
+cbor2==5.5.0
+cffi==1.16.0
+cryptography==41.0.4
+Cython==0.29.36
+DTLSSocket==0.1.16
+fe25519==1.5.0
+filelock==3.12.4
+ge25519==1.5.1
+numpy==1.26.1
+pycparser==2.21
+Pygments==2.16.1
+termcolor==2.3.0
+websockets==12.0

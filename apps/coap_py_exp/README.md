@@ -2,7 +2,7 @@
 
 #### Funtional prototype for communication using events
 - There is host server hosting CoAP endpoints; run by (configured for 10 clients but adjustable)
--For DTLS setup, environment variable is set for `host_server` setting through `export AIOCOAP_DTLSSERVER_ENABLED=1` in terminal followed by
+- For DTLS setup, environment variable is set for `host_server` setting through `export AIOCOAP_DTLSSERVER_ENABLED=1` in terminal followed by
 ```bash
 python host_server.py 
 ```

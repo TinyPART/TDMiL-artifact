@@ -3,6 +3,7 @@ import asyncio
 import numpy as np
 import cbor2
 from aiocoap import Context, Message, GET, PUT, CONTENT
+import argparse
 
 logging.basicConfig(level=logging.INFO)
 from functools import reduce
@@ -108,7 +109,12 @@ async def main(num_rounds):
 if __name__ == "__main__":
     num_clients = 10
     threshold = 6
-    total_rounds = 2
+    parser = argparse.ArgumentParser(description="Asynchronous Client with Argument")
+
+    parser.add_argument(
+        "--total_rounds", type=int, help="Number of the total rounds", default=10
+    )
+    args = parser.parse_args()
     # try:
     #     asyncio.run(main(total_rounds))
 
@@ -117,6 +123,6 @@ if __name__ == "__main__":
     #     loop.close()
     loop = asyncio.get_event_loop()
     try:
-        loop.run_until_complete(main(total_rounds))
+        loop.run_until_complete(main(args.total_rounds))
     finally:
         loop.close()

@@ -10,7 +10,7 @@ from aiocoap import Context, Message, GET, PUT
 import argparse
 
 # TODO: Clients should not do PUT request on other's behalf
-# export AIOCOAP_DTLSSERVER_ENABLED=1 
+# export AIOCOAP_DTLSSERVER_ENABLED=1
 
 
 class globalModel(resource.ObservableResource):
@@ -261,7 +261,7 @@ async def main(num_clients):
         root.add_resource(["local_model", f"c_{client_idx}"], localModel(client_idx))
 
     server_context = await aiocoap.Context.create_server_context(
-        root, bind=("::1", 5683)
+        root, bind=(args.address, args.port)
     )
     server_context.server_credentials.load_from_dict(
         {
@@ -276,7 +276,7 @@ async def main(num_clients):
                     "psk": b"serverPSK",
                     "client-identity": b"server_Identity",
                 }
-            }
+            },
         }
     )
 
@@ -290,6 +290,14 @@ if __name__ == "__main__":
     # Add an argument for client_idx
     parser.add_argument(
         "--num_clients", type=int, help="Number of the total clients", default=10
+    )
+    parser.add_argument(
+        "--address",
+        default="::1",
+        help="Specify the address to bind the server to (default: ::1)",
+    )
+    parser.add_argument(
+        "--port", type=int, default=5683, help="Specify the port number (default: 5683)"
     )
 
     # Parse the command-line arguments
