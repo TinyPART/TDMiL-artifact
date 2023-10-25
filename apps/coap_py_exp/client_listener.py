@@ -8,11 +8,14 @@ import argparse
 logging.basicConfig(level=logging.INFO)
 from functools import reduce
 
-from host_server import update_global_model_by_round
+from host_server import update_global_model_by_round, construct_url, DTLS
 
 
 async def fetch_client_data(client_idx, results, protocol, round_to_agg):
-    uri = f"coaps://localhost/local_model/c_{client_idx}?round={round_to_agg}"
+    uri = construct_url(
+        args.host, f"/local_model/c_{client_idx}", f"round={round_to_agg}"
+    )
+    # uri = f"coaps://localhost/local_model/c_{client_idx}?round={round_to_agg}"
     request = Message(code=GET, uri=uri, observe=0)
     # listen for an update on client's endpoint
     try:
@@ -44,7 +47,7 @@ async def fetch_client_data(client_idx, results, protocol, round_to_agg):
 async def main(num_rounds):
     # trigger initial server listener with dummy data
     serialized_data = cbor2.dumps(b"data_and_metadata")
-    success = await update_global_model_by_round(0, serialized_data)
+    success = await update_global_model_by_round(args.host, 0, serialized_data)
 
     for r in range(1, num_rounds):
         results = []
@@ -52,10 +55,7 @@ async def main(num_rounds):
         protocol.client_credentials.load_from_dict(
             {
                 "coaps://localhost/local_model/*": {
-                    "dtls": {
-                        "psk": b"secretPSK",
-                        "client-identity": b"client_Identity",
-                    }
+                    "dtls": DTLS,
                 }
             }
         )
@@ -98,7 +98,7 @@ async def main(num_rounds):
         print(data_and_metadata["model"])
         await asyncio.sleep(5)
         serialized_data = cbor2.dumps(data_and_metadata)
-        success = await update_global_model_by_round(round, serialized_data)
+        success = await update_global_model_by_round(args.host, round, serialized_data)
 
         if success:
             print(f"global model updated for round: {round}")
@@ -113,6 +113,11 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--total_rounds", type=int, help="Number of the total rounds", default=10
+    )
+    parser.add_argument(
+        "--host",
+        default="coaps://localhost/",
+        help="Specify the address to connect to the server",
     )
     args = parser.parse_args()
     # try:
