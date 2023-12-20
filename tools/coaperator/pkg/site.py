@@ -23,7 +23,6 @@ class CoaperatorSite(aiocoap.resource.Site):
         self.rd.register_change_callback(_update_callback)
         self.rd.add_resource(self, self.context)
         logging.info(f"initialized CoAP site")
-        print(self.rd.get_endpoint(""))
 
 
 coapsite = CoaperatorSite()
