@@ -15,12 +15,14 @@ app = FastAPI(title="coaperator")
 logging.basicConfig()
 logging.getLogger('').setLevel('INFO')
 
+
 @app.get("/")
 async def read_root():
-    return {"hello":"world"}
+    return {"hello": "world"}
+
 
 @app.get("/devices", response_model=List[DevModel],
-         summary = "Retrieve the list of devices registered")
+         summary="Retrieve the list of devices registered")
 def read_devices():
     devices = coapsite.rd.get_endpoints()
     return [DevModel.from_device(device) for device in devices]
