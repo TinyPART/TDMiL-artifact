@@ -1,0 +1,5 @@
+ifeq ($(PARAMS_PERSISTENT_ON_FLASH), 1)
+  USEMODULE += mtd
+  USEMODULE += mtd_flashpage
+  USEMODULE += mtd_write_page
+endif
