@@ -1,6 +1,4 @@
 from pkg.device import Device
-from sanic import json
-from sanic.views import HTTPMethodView
 from pydantic import BaseModel, Field
 from typing import List
 from pkg.site import coapsite
@@ -16,11 +14,3 @@ class DevModel(BaseModel):
         links = dev.links.to_py()
         path = '/'.join(dev.path)
         return DevModel(ep=dev.registration_parameters['ep'][0], lifetime=dev.lt, path=path, links=[link[0] for link in links])
-
-
-class DevView(HTTPMethodView):
-    async def get(self, request, ep):
-        print(request.app.shared_ctx)
-        dev = coapsite.rd.get_endpoint(ep)
-        return json(DevModel.from_device(dev))
-

@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
 
-from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 import uvicorn
 import aiocoap.resource
 import aiocoap.error
 from aiocoap.numbers.contentformat import ContentFormat
-import asyncio
 from typing import List
 from pkg.site import coapsite
 import logging
-from models.device import DevView
 from models.device import DevModel
 
 app = FastAPI(title="coaperator")
