@@ -37,6 +37,8 @@ extern "C" {
 typedef struct coap_channel coap_channel_t;
 
 typedef struct {
+    const uint8_t *payload;
+    size_t payload_len;
     uint8_t cache_key[32];
     size_t offset;
     size_t num;
@@ -50,13 +52,42 @@ struct coap_channel {
     coap_resource_t endpoint;
 };
 
+void coap_channel_init(coap_channel_t *channel, const char *path, coap_channel_callback_t callback);
+
 /**
- * @brief Submits a payload to subscribers
+ * @brief Sends a CoAP payload through the specified channel.
+ *
+ * @param channel Pointer to the CoAP channel structure.
+ * @param payload Pointer to the payload data to be sent.
+ * @param payload_len Length of the payload data.
+ * @return Integer indicating the status of the operation:
+ *         - Returns 0 on success.
+ *         - Returns a non-zero value to indicate an error.
  */
 int coap_channel_send_payload(coap_channel_t *channel, uint8_t *payload, size_t payload_len);
+
+/**
+ * @brief Submits a payload through the specified CoAP channel.
+ *
+ * @param channel Pointer to the CoAP channel structure.
+ * @param buf Pointer to the buffer containing the payload to submit.
+ * @param buf_len Length of the buffer containing the payload.
+ * @return Integer indicating the status of the operation:
+ *         - Returns 0 on success.
+ *         - Returns a non-zero value to indicate an error.
+ */
 int coap_channel_submit_payload(coap_channel_t *channel, void *buf, size_t buf_len);
 
+/**
+ * @brief Initializes a CoAP channel with the specified parameters.
+ *
+ * @param channel Pointer to the CoAP channel structure to be initialized.
+ * @param path The path associated with the channel.
+ * @param callback Callback function to handle channel events.
+ *                 The function signature must match 'coap_channel_callback_t'.
+ */
 void coap_channel_init(coap_channel_t *channel, const char *path, coap_channel_callback_t callback);
+
 #ifdef __cplusplus
 }
 #endif
