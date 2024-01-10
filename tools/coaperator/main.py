@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import uuid
 
 from fastapi import FastAPI, Request
 import uvicorn
@@ -9,6 +10,8 @@ from typing import List
 from pkg.site import coapsite
 import logging
 from models.device import DevModel
+from models.ml import MLModel, BaseMLModel
+from pkg.mlmodelstore import MLModelStore
 
 app = FastAPI(title="coaperator")
 
@@ -30,10 +33,28 @@ def read_devices():
 
 @app.get(path="/device/{ep}", response_model=DevModel,
          summary="Retrieve a specific registered device by it's endpoint identifier")
-async def get(ep: str):
+async def get_device(ep: str):
     dev = coapsite.rd.get_endpoint(ep)
     return DevModel.from_device(dev)
 
+
+@app.get(path="/models/{uid}", response_model=MLModel,
+         summary="Retrieve a specific model by ID")
+async def get_model(uid: uuid.UUID):
+    return MLModelStore().get_model(uid)
+
+
+@app.post(path="/models")
+async def submit_model(model: MLModel):
+    store = MLModelStore()
+    store.add_model(model)
+
+
+@app.get(path="/models", response_model=List[BaseMLModel])
+async def get_model_list() -> List[BaseMLModel]:
+    store = MLModelStore()
+    models = store.list()
+    return [BaseMLModel(identifier=uid) for uid in models]
 
 class Welcome(aiocoap.resource.Resource):
     async def render_get(self, request):
