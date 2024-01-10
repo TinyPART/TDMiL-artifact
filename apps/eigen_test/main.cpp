@@ -259,33 +259,8 @@ int main()
     cout << "b2_back:\n"
          << b2_back << endl;
 
-    // Predict and print results
-    // for (int i = 0; i < X_test.rows(); ++i)
-    // {
-    //     VectorXf x = X_test.row(i);
-    //     int activatedNeurons = nn.predict(x);
-    //     printf("Sample %d: Activated neurons in hidden layer = %d\n", i + 1, activatedNeurons);
-    // }
-    int correct = 0;
-    for (int i = 0; i < X_test.rows(); ++i)
-    {
-        VectorXf x = X_test.row(i);
-        int activatedNeurons = nn.predict(x);
-        int real_label = -1;
-        for (int j = 0; j < y_test.cols(); ++j)
-        {
-            if (y_test(i, j) == 1.0)
-            {
-                real_label = j;
-                break;
-            }
-        }
-        if (real_label == activatedNeurons)
-        {
-            correct++;
-        }
-        // conf_file << "(" << activatedNeurons << "," << real_label << "),";
-    }
-    cout << "Accuracy: " << static_cast<float>(correct) / X_test.rows() << endl;
+    float accuracy = nn.evaluateAccuracy(X_test, y_test);
+    cout << " Test Accuracy = " << accuracy * 100 << endl;
+
     return 0;
 }
