@@ -44,7 +44,7 @@ typedef struct{
     uint8_t* values;
     size_t num_bytes;
     mlmodel_param_permission_t permission;
-    char *name;
+    const char *name;
     uint8_t* volatile_values;
     uint8_t* persistent_values;
 } mlmodel_param_t;
@@ -113,8 +113,8 @@ size_t mlmodel_get_num_output_vars(const mlmodel_t *model);
 mlmodel_iovar_t *mlmodel_get_output_variable(const mlmodel_t *model, size_t location);
 
 /* Operator Interface */
-size_t mlmodel_opt_get_num_params(const mlmodel_operator_t *operator);
-mlmodel_param_t *mlmodel_opt_get_param(const mlmodel_operator_t *operator, size_t location);
+size_t mlmodel_opt_get_num_params(const mlmodel_operator_t *operatr);
+mlmodel_param_t *mlmodel_opt_get_param(const mlmodel_operator_t *operatr, size_t location);
 
 /* Parameter Interface */
 size_t mlmodel_param_get_values_bytes(const mlmodel_param_t *parameter);
