@@ -25,7 +25,5 @@ class MLController(object):
         payload = self._fmt_status()
         response = await self.channel.submit(payload)
         if response:
-            if response.code == aiocoap.Code.CONTENT and response.payload:
+            if response.code == aiocoap.Code.CHANGED and response.payload:
                 return cbor.loads(response.payload)
-
-

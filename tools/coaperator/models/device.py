@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 from typing import List
 from pkg.site import coapsite
 
+
 class DevModel(BaseModel):
     ep: str = Field(title="Device endpoint string")
     lifetime: int = Field(title="Registered lifetime of the device")
