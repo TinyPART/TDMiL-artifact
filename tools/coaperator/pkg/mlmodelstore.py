@@ -14,9 +14,6 @@ class MLModelStore(object):
             cls._instance.models: Dict[uuid.UUID: MLModel] = {}
         return cls._instance
 
-    #def __init__(self):
-    #    self.models: Dict[uuid.UUID: MLModel] = {}
-
     def list(self):
         return self.models.keys()
 
