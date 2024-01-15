@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "coaperator"
+version = "0.1.0"
+description = "CoAP/HTTP FL/ML communication manager"
+authors = ["Koen Zandberg <koen.zandberg@fu-berlin.de"]
+
+[tool.poetry.dependencies]
+aiocoap = {version="^0.4.7", extras=["dtls"]}
+fastapi = {version="^0.105.0", extras=["all"]}
+pydantic = "^2.5.3"
+python = "^3.9"
+cbor2 = "^5.5.1"
+
+[tool.poetry.dev-dependencies]
+black = "^23.12.1"
+flake8 = "^7.0.0"
+flake8-docstrings = "^1.7.0"
+mypy = "^1.8.0"
+pep8-naming = "^0.13.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

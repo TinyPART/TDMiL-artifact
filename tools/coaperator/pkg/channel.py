@@ -1,5 +1,4 @@
-import asyncio
-
+"""Async communication channel from/to CoAP clients."""
 import aiocoap
 import aiocoap.error
 import logging
@@ -7,8 +6,19 @@ from typing import Optional
 
 
 class CoapChannel(object):
+    """CoAP channel based on observe/post CoAP requests.
 
-    def __init__(self, remote, endpoint, context, receive_callback=None, logger: Optional[logging.Logger] = None):
+    Establishes a bidirectional channel with a CoAP client
+    """
+
+    def __init__(
+        self,
+        remote,
+        endpoint,
+        context,
+        receive_callback=None,
+        logger: Optional[logging.Logger] = None,
+    ):
         self.remote = remote
         self.endpoint = endpoint
         self.context = context
@@ -20,9 +30,16 @@ class CoapChannel(object):
             self.logger = logging.getLogger("device.channel")
 
     async def submit(self, payload: bytes) -> Optional[aiocoap.Message]:
+        """Submit a message to the connected client.
+
+        :param payload: Payload to send to the client
+        :return: Response CoAP message
+        """
         network_base = self.remote.uri
         uri = network_base + self.endpoint
-        request = aiocoap.Message(uri=uri, mtype=aiocoap.CON, code=aiocoap.Code.POST, payload=payload)
+        request = aiocoap.Message(
+            uri=uri, mtype=aiocoap.CON, code=aiocoap.Code.POST, payload=payload
+        )
         try:
             response = await self.context.request(request).response
         except aiocoap.error.Error as e:
