@@ -16,7 +16,7 @@ from pkg.mlmodelstore import MLModelStore
 app = FastAPI(title="coaperator")
 
 logging.basicConfig()
-logging.getLogger('').setLevel('INFO')
+logging.getLogger("").setLevel("INFO")
 
 
 @app.get("/")
@@ -24,22 +24,31 @@ async def read_root():
     return {"hello": "world"}
 
 
-@app.get("/devices", response_model=List[DevModel],
-         summary="Retrieve the list of devices registered")
+@app.get(
+    "/devices",
+    response_model=List[DevModel],
+    summary="Retrieve the list of devices registered",
+)
 def read_devices():
     devices = coapsite.rd.get_endpoints()
     return [DevModel.from_device(device) for device in devices]
 
 
-@app.get(path="/device/{ep}", response_model=DevModel,
-         summary="Retrieve a specific registered device by it's endpoint identifier")
+@app.get(
+    path="/device/{ep}",
+    response_model=DevModel,
+    summary="Retrieve a specific registered device by it's endpoint identifier",
+)
 async def get_device(ep: str):
     dev = coapsite.rd.get_endpoint(ep)
     return DevModel.from_device(dev)
 
 
-@app.get(path="/models/{uid}", response_model=MLModel,
-         summary="Retrieve a specific model by ID")
+@app.get(
+    path="/models/{uid}",
+    response_model=MLModel,
+    summary="Retrieve a specific model by ID",
+)
 async def get_model(uid: uuid.UUID):
     return MLModelStore().get_model(uid)
 
@@ -56,10 +65,13 @@ async def get_model_list() -> List[BaseMLModel]:
     models = store.list()
     return [BaseMLModel(identifier=uid) for uid in models]
 
+
 class Welcome(aiocoap.resource.Resource):
     async def render_get(self, request):
         try:
-            return aiocoap.Message(payload="hello world", content_format=ContentFormat.TEXT)
+            return aiocoap.Message(
+                payload="hello world", content_format=ContentFormat.TEXT
+            )
         except KeyError:
             raise aiocoap.error.UnsupportedContentFormat
 

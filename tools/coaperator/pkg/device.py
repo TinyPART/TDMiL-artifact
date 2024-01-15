@@ -7,11 +7,30 @@ from pkg.mlcontrol import MLController
 
 
 class Device(Registration):
-    def __init__(self, static_registration_parameters, path, network_remote, delete_cb, update_cb,
-                 registration_parameters, proxy_host, setproxyremote_cb, context=None):
-        super().__init__(static_registration_parameters, path, network_remote, delete_cb, update_cb,
-                         registration_parameters, proxy_host, setproxyremote_cb, context)
-        name = '/'.join(static_registration_parameters['ep'])
+    def __init__(
+        self,
+        static_registration_parameters,
+        path,
+        network_remote,
+        delete_cb,
+        update_cb,
+        registration_parameters,
+        proxy_host,
+        setproxyremote_cb,
+        context=None,
+    ):
+        super().__init__(
+            static_registration_parameters,
+            path,
+            network_remote,
+            delete_cb,
+            update_cb,
+            registration_parameters,
+            proxy_host,
+            setproxyremote_cb,
+            context,
+        )
+        name = "/".join(static_registration_parameters["ep"])
         self.logger = logging.getLogger(f"device.{name}")
         self.logger.info(f"New device at {network_remote.sockaddr[0]}")
         self.channel = CoapChannel(network_remote, "/ml", context)

@@ -11,10 +11,9 @@ API docs.
 
 ## Prerequisites
 
-Install the python dependencies from the requirements.txt file:
-
+Installation can be done using Poetry:
 ```
-pip install -r requirements.txt
+poetry install --only main --no-root
 ```
 
 ## Usage
@@ -28,3 +27,17 @@ uvicorn main:app  --workers 0
 ## Internals
 
 CoAPerator is a python application combining FastAPI and aiocoap
+
+## Development
+
+Install development dependencies via:
+```
+poetry install --no-root
+```
+
+Run the linters using:
+```
+poetry run black .
+poetry run flake8 .
+poetry run mypy .
+```

@@ -1,3 +1,4 @@
+"""Device model."""
 from pkg.device import Device
 from pydantic import BaseModel, Field
 from typing import List
@@ -13,5 +14,10 @@ class DevModel(BaseModel):
     @classmethod
     def from_device(cls, dev: Device):
         links = dev.links.to_py()
-        path = '/'.join(dev.path)
-        return DevModel(ep=dev.registration_parameters['ep'][0], lifetime=dev.lt, path=path, links=[link[0] for link in links])
+        path = "/".join(dev.path)
+        return DevModel(
+            ep=dev.registration_parameters["ep"][0],
+            lifetime=dev.lt,
+            path=path,
+            links=[link[0] for link in links],
+        )

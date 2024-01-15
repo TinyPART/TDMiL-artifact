@@ -9,11 +9,10 @@ MLCONTROL_RPC_STOP = 2
 
 
 def cbor2_dumps_kwargs():
-    return {'datetime_as_timestamp': True, 'canonical': True}
+    return {"datetime_as_timestamp": True, "canonical": True}
 
 
 class MLController(object):
-
     def __init__(self, channel: CoapChannel):
         self.channel = channel
 
