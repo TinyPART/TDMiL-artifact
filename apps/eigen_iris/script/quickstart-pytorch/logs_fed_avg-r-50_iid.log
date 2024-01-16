@@ -1,0 +1,221 @@
+Starting server
+Starting client 0
+Starting client 1
+Starting client 2
+Starting client 3
+Starting client 4
+my_iris_app | INFO flwr 2024-01-16 15:55:03,220 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:55:03,222 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:55:03,222 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:55:03,226 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:55:03,226 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:55:03,227 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:55:03,228 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:55:03,231 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:55:03,263 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:55:03,266 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:55:03,267 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:55:03,270 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:55:03,287 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:55:03,288 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:55:03,288 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:55:03,291 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:55:03,310 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:55:03,312 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:55:03,313 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:55:03,316 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:55:17,515 | client.py:153 | Final accuracy: 0.9733333333333334
+my_iris_app | INFO flwr 2024-01-16 15:55:17,515 | client.py:153 | Final accuracy: 0.9733333333333334
+my_iris_app | INFO flwr 2024-01-16 15:55:17,515 | client.py:154 | Final loss: 34.78517711907625
+my_iris_app | INFO flwr 2024-01-16 15:55:17,515 | client.py:154 | Final loss: 34.78517711907625
+my_iris_app | INFO flwr 2024-01-16 15:55:17,515 | client.py:153 | Final accuracy: 0.9733333333333334
+my_iris_app | INFO flwr 2024-01-16 15:55:17,515 | client.py:154 | Final loss: 34.78517711907625
+my_iris_app | INFO flwr 2024-01-16 15:55:17,515 | client.py:153 | Final accuracy: 0.9733333333333334
+my_iris_app | INFO flwr 2024-01-16 15:55:17,516 | client.py:154 | Final loss: 34.78517711907625
+my_iris_app | INFO flwr 2024-01-16 15:55:17,516 | client.py:153 | Final accuracy: 0.9733333333333334
+my_iris_app | INFO flwr 2024-01-16 15:55:17,516 | client.py:154 | Final loss: 34.78517711907625
+my_iris_app | DEBUG flwr 2024-01-16 15:55:17,520 | connection.py:139 | gRPC channel closed
+my_iris_app | DEBUG flwr 2024-01-16 15:55:17,520 | connection.py:139 | gRPC channel closed
+my_iris_app | DEBUG flwr 2024-01-16 15:55:17,520 | connection.py:139 | gRPC channel closed
+my_iris_app | DEBUG flwr 2024-01-16 15:55:17,520 | connection.py:139 | gRPC channel closed
+my_iris_app | DEBUG flwr 2024-01-16 15:55:17,520 | connection.py:139 | gRPC channel closed
+my_iris_app | INFO flwr 2024-01-16 15:55:17,520 | app.py:169 | Disconnect and shut down
+my_iris_app | INFO flwr 2024-01-16 15:55:17,520 | app.py:169 | Disconnect and shut down
+my_iris_app | INFO flwr 2024-01-16 15:55:17,520 | app.py:169 | Disconnect and shut down
+my_iris_app | INFO flwr 2024-01-16 15:55:17,520 | app.py:169 | Disconnect and shut down
+my_iris_app | INFO flwr 2024-01-16 15:55:17,520 | app.py:169 | Disconnect and shut down
+FL finished in 14.288578337000217
+INFO flwr 2024-01-16 15:55:17,517 | app.py:225 | app_fit: losses_distributed [(1, 145.58551025390625), (2, 129.3594512939453), (3, 115.9257583618164), (4, 106.04078674316406), (5, 98.71045684814453), (6, 92.94279479980469), (7, 88.66523742675781), (8, 84.79364013671875), (9, 81.61823272705078), (10, 79.08488464355469), (11, 76.84901428222656), (12, 74.73465728759766), (13, 72.94242095947266), (14, 71.20391845703125), (15, 69.63688659667969), (16, 68.1658706665039), (17, 66.8164291381836), (18, 65.50653076171875), (19, 64.07196807861328), (20, 63.08207321166992), (21, 61.53237533569336), (22, 60.603328704833984), (23, 59.530982971191406), (24, 58.174560546875), (25, 57.06578063964844), (26, 56.21585464477539), (27, 55.07477569580078), (28, 53.89775466918945), (29, 53.22853088378906), (30, 52.35564041137695), (31, 51.47421646118164), (32, 50.57966613769531), (33, 49.64174270629883), (34, 49.178348541259766), (35, 48.14490509033203), (36, 47.277862548828125), (37, 46.132080078125), (38, 45.896812438964844), (39, 44.8792610168457), (40, 44.44059753417969), (41, 44.05809783935547), (42, 43.31113052368164), (43, 42.552162170410156), (44, 42.24851989746094), (45, 41.746490478515625), (46, 40.99008560180664), (47, 40.41436767578125), (48, 40.15959930419922), (49, 39.61021423339844), (50, 39.07754898071289)]
+INFO flwr 2024-01-16 15:55:17,517 | app.py:226 | app_fit: metrics_distributed_fit {}
+INFO flwr 2024-01-16 15:55:17,517 | app.py:227 | app_fit: metrics_distributed {'accuracy': [(1, 0.3), (2, 0.5733333333333334), (3, 0.6133333333333333), (4, 0.62), (5, 0.64), (6, 0.64), (7, 0.6533333333333333), (8, 0.6733333333333333), (9, 0.6866666666666666), (10, 0.6933333333333334), (11, 0.7066666666666667), (12, 0.72), (13, 0.72), (14, 0.7333333333333332), (15, 0.7733333333333333), (16, 0.7866666666666666), (17, 0.7866666666666666), (18, 0.7866666666666666), (19, 0.7933333333333333), (20, 0.7933333333333333), (21, 0.8266666666666667), (22, 0.8199999999999998), (23, 0.8266666666666667), (24, 0.8466666666666667), (25, 0.86), (26, 0.86), (27, 0.8733333333333333), (28, 0.8933333333333333), (29, 0.88), (30, 0.8866666666666667), (31, 0.9), (32, 0.9), (33, 0.92), (34, 0.9066666666666666), (35, 0.9266666666666666), (36, 0.9266666666666666), (37, 0.9266666666666666), (38, 0.9266666666666666), (39, 0.9266666666666666), (40, 0.9266666666666666), (41, 0.9266666666666666), (42, 0.9266666666666666), (43, 0.9266666666666666), (44, 0.9266666666666666), (45, 0.9266666666666666), (46, 0.9266666666666666), (47, 0.9266666666666666), (48, 0.9266666666666666), (49, 0.9266666666666666), (50, 0.94)]}
+my_iris_app | INFO flwr 2024-01-16 15:56:19,988 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | INFO flwr 2024-01-16 15:56:19,991 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:56:19,991 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:56:19,991 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:56:19,992 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:56:19,992 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:56:19,994 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | DEBUG flwr 2024-01-16 15:56:19,995 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:56:19,997 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:56:19,998 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:56:19,999 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:56:20,002 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:56:20,032 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:56:20,032 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:56:20,033 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:56:20,036 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:56:20,039 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:56:20,040 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:56:20,040 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:56:20,044 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:56:34,044 | client.py:153 | Final accuracy: 0.9666666666666667
+my_iris_app | INFO flwr 2024-01-16 15:56:34,044 | client.py:154 | Final loss: 35.6406014431268
+my_iris_app | INFO flwr 2024-01-16 15:56:34,044 | client.py:153 | Final accuracy: 0.9666666666666667
+my_iris_app | INFO flwr 2024-01-16 15:56:34,044 | client.py:154 | Final loss: 35.6406014431268
+my_iris_app | INFO flwr 2024-01-16 15:56:34,045 | client.py:153 | Final accuracy: 0.9666666666666667
+my_iris_app | INFO flwr 2024-01-16 15:56:34,045 | client.py:154 | Final loss: 35.6406014431268
+my_iris_app | INFO flwr 2024-01-16 15:56:34,056 | client.py:153 | Final accuracy: 0.9666666666666667
+my_iris_app | INFO flwr 2024-01-16 15:56:34,056 | client.py:154 | Final loss: 35.6406014431268
+my_iris_app | INFO flwr 2024-01-16 15:56:34,057 | client.py:153 | Final accuracy: 0.9666666666666667
+my_iris_app | INFO flwr 2024-01-16 15:56:34,057 | client.py:154 | Final loss: 35.6406014431268
+my_iris_app | DEBUG flwr 2024-01-16 15:56:34,062 | connection.py:139 | gRPC channel closed
+my_iris_app | INFO flwr 2024-01-16 15:56:34,062 | app.py:169 | Disconnect and shut down
+my_iris_app | DEBUG flwr 2024-01-16 15:56:34,063 | connection.py:139 | gRPC channel closed
+my_iris_app | DEBUG flwr 2024-01-16 15:56:34,063 | connection.py:139 | gRPC channel closed
+my_iris_app | INFO flwr 2024-01-16 15:56:34,063 | app.py:169 | Disconnect and shut down
+my_iris_app | DEBUG flwr 2024-01-16 15:56:34,063 | connection.py:139 | gRPC channel closed
+my_iris_app | INFO flwr 2024-01-16 15:56:34,063 | app.py:169 | Disconnect and shut down
+my_iris_app | INFO flwr 2024-01-16 15:56:34,063 | app.py:169 | Disconnect and shut down
+my_iris_app | DEBUG flwr 2024-01-16 15:56:34,064 | connection.py:139 | gRPC channel closed
+my_iris_app | INFO flwr 2024-01-16 15:56:34,064 | app.py:169 | Disconnect and shut down
+FL finished in 14.060443743000178
+INFO flwr 2024-01-16 15:56:34,058 | app.py:225 | app_fit: losses_distributed [(1, 167.38307189941406), (2, 166.46998596191406), (3, 165.91885375976562), (4, 164.6001434326172), (5, 162.77801513671875), (6, 158.9377899169922), (7, 153.7657928466797), (8, 144.87220764160156), (9, 135.48410034179688), (10, 126.08709716796875), (11, 117.50152587890625), (12, 108.43458557128906), (13, 99.7628173828125), (14, 91.94065856933594), (15, 85.88125610351562), (16, 81.11028289794922), (17, 77.21774291992188), (18, 74.3333511352539), (19, 71.77713775634766), (20, 69.33194732666016), (21, 67.2977294921875), (22, 65.60464477539062), (23, 63.88897705078125), (24, 62.260780334472656), (25, 60.87324905395508), (26, 59.5903434753418), (27, 58.316043853759766), (28, 57.260581970214844), (29, 56.16141891479492), (30, 54.770477294921875), (31, 54.01812744140625), (32, 52.6335563659668), (33, 51.9849853515625), (34, 50.566680908203125), (35, 49.97052001953125), (36, 49.20151901245117), (37, 48.226654052734375), (38, 47.148529052734375), (39, 46.6298828125), (40, 45.97090148925781), (41, 45.14291000366211), (42, 44.3707275390625), (43, 43.81016159057617), (44, 43.11683654785156), (45, 42.70481872558594), (46, 42.10429382324219), (47, 41.39535140991211), (48, 41.11489486694336), (49, 40.56322479248047), (50, 39.970664978027344)]
+INFO flwr 2024-01-16 15:56:34,058 | app.py:226 | app_fit: metrics_distributed_fit {}
+INFO flwr 2024-01-16 15:56:34,058 | app.py:227 | app_fit: metrics_distributed {'accuracy': [(1, 0.31333333333333335), (2, 0.31333333333333335), (3, 0.31333333333333335), (4, 0.3466666666666667), (5, 0.6133333333333333), (6, 0.6133333333333333), (7, 0.3), (8, 0.3), (9, 0.6533333333333333), (10, 0.68), (11, 0.6866666666666666), (12, 0.7), (13, 0.7066666666666667), (14, 0.74), (15, 0.7533333333333333), (16, 0.7666666666666668), (17, 0.7733333333333333), (18, 0.7733333333333333), (19, 0.78), (20, 0.8066666666666666), (21, 0.8199999999999998), (22, 0.8266666666666667), (23, 0.8333333333333334), (24, 0.8533333333333334), (25, 0.86), (26, 0.86), (27, 0.8666666666666667), (28, 0.8666666666666667), (29, 0.8666666666666667), (30, 0.8933333333333333), (31, 0.8933333333333333), (32, 0.9133333333333333), (33, 0.9066666666666666), (34, 0.92), (35, 0.9133333333333333), (36, 0.92), (37, 0.92), (38, 0.9333333333333333), (39, 0.9266666666666666), (40, 0.9266666666666666), (41, 0.9333333333333333), (42, 0.94), (43, 0.94), (44, 0.94), (45, 0.94), (46, 0.94), (47, 0.94), (48, 0.94), (49, 0.94), (50, 0.94)]}my_iris_app | INFO flwr 2024-01-16 15:57:05,770 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | INFO flwr 2024-01-16 15:57:05,771 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:57:05,772 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:57:05,773 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:57:05,773 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:57:05,773 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:57:05,776 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | DEBUG flwr 2024-01-16 15:57:05,777 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:57:05,785 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:57:05,785 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:57:05,786 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:57:05,789 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:57:05,829 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:57:05,830 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:57:05,830 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:57:05,834 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:57:05,857 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:57:05,858 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:57:05,858 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:57:05,861 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:57:20,484 | client.py:153 | Final accuracy: 0.9666666666666667
+my_iris_app | INFO flwr 2024-01-16 15:57:20,484 | client.py:154 | Final loss: 34.20130502060056
+my_iris_app | INFO flwr 2024-01-16 15:57:20,485 | client.py:153 | Final accuracy: 0.9666666666666667
+my_iris_app | INFO flwr 2024-01-16 15:57:20,485 | client.py:154 | Final loss: 34.20130502060056
+my_iris_app | INFO flwr 2024-01-16 15:57:20,485 | client.py:153 | Final accuracy: 0.9666666666666667
+my_iris_app | INFO flwr 2024-01-16 15:57:20,485 | client.py:154 | Final loss: 34.20130502060056
+my_iris_app | INFO flwr 2024-01-16 15:57:20,486 | client.py:153 | Final accuracy: 0.9666666666666667
+my_iris_app | INFO flwr 2024-01-16 15:57:20,486 | client.py:154 | Final loss: 34.20130502060056
+my_iris_app | INFO flwr 2024-01-16 15:57:20,486 | client.py:153 | Final accuracy: 0.9666666666666667
+my_iris_app | INFO flwr 2024-01-16 15:57:20,487 | client.py:154 | Final loss: 34.20130502060056
+my_iris_app | DEBUG flwr 2024-01-16 15:57:20,490 | connection.py:139 | gRPC channel closed
+my_iris_app | DEBUG flwr 2024-01-16 15:57:20,490 | connection.py:139 | gRPC channel closed
+my_iris_app | DEBUG flwr 2024-01-16 15:57:20,490 | connection.py:139 | gRPC channel closed
+my_iris_app | INFO flwr 2024-01-16 15:57:20,490 | app.py:169 | Disconnect and shut down
+my_iris_app | DEBUG flwr 2024-01-16 15:57:20,490 | connection.py:139 | gRPC channel closed
+my_iris_app | DEBUG flwr 2024-01-16 15:57:20,490 | connection.py:139 | gRPC channel closed
+my_iris_app | INFO flwr 2024-01-16 15:57:20,490 | app.py:169 | Disconnect and shut down
+my_iris_app | INFO flwr 2024-01-16 15:57:20,490 | app.py:169 | Disconnect and shut down
+my_iris_app | INFO flwr 2024-01-16 15:57:20,490 | app.py:169 | Disconnect and shut down
+my_iris_app | INFO flwr 2024-01-16 15:57:20,490 | app.py:169 | Disconnect and shut down
+ server.py:153 | FL finished in 14.709024224999666
+INFO flwr 2024-01-16 15:57:20,487 | app.py:225 | app_fit: losses_distributed [(1, 161.8336181640625), (2, 152.8048858642578), (3, 142.2916259765625), (4, 130.1285858154297), (5, 116.7578353881836), (6, 105.286865234375), (7, 97.28915405273438), (8, 91.59664916992188), (9, 86.73939514160156), (10, 83.19589233398438), (11, 80.07939910888672), (12, 77.11099243164062), (13, 74.92932891845703), (14, 72.7370834350586), (15, 71.06778717041016), (16, 69.52952575683594), (17, 67.74809265136719), (18, 66.27484130859375), (19, 64.77669525146484), (20, 63.35838317871094), (21, 61.92490005493164), (22, 60.581844329833984), (23, 59.46363067626953), (24, 58.45614242553711), (25, 56.98179626464844), (26, 56.02109146118164), (27, 54.97035598754883), (28, 53.75228500366211), (29, 52.861061096191406), (30, 51.95876693725586), (31, 51.36707305908203), (32, 50.08888626098633), (33, 49.1114501953125), (34, 48.733707427978516), (35, 47.53314208984375), (36, 46.655643463134766), (37, 45.89426040649414), (38, 45.45558547973633), (39, 44.75666809082031), (40, 44.21883773803711), (41, 43.19655227661133), (42, 42.56779098510742), (43, 42.29877853393555), (44, 41.31754684448242), (45, 40.98115921020508), (46, 40.37453842163086), (47, 40.12727737426758), (48, 39.617156982421875), (49, 38.87062454223633), (50, 38.59915542602539)]
+INFO flwr 2024-01-16 15:57:20,487 | app.py:226 | app_fit: metrics_distributed_fit {}
+INFO flwr 2024-01-16 15:57:20,488 | app.py:227 | app_fit: metrics_distributed {'accuracy': [(1, 0.3), (2, 0.3), (3, 0.3), (4, 0.3), (5, 0.62), (6, 0.64), (7, 0.6733333333333333), (8, 0.68), (9, 0.7), (10, 0.7), (11, 0.7), (12, 0.72), (13, 0.72), (14, 0.76), (15, 0.76), (16, 0.7666666666666668), (17, 0.7733333333333333), (18, 0.78), (19, 0.8066666666666666), (20, 0.8133333333333334), (21, 0.84), (22, 0.8666666666666667), (23, 0.8666666666666667), (24, 0.86), (25, 0.88), (26, 0.88), (27, 0.8866666666666667), (28, 0.9066666666666666), (29, 0.9133333333333333), (30, 0.9133333333333333), (31, 0.9), (32, 0.92), (33, 0.92), (34, 0.92), (35, 0.9266666666666666), (36, 0.9266666666666666), (37, 0.9266666666666666), (38, 0.9266666666666666), (39, 0.9266666666666666), (40, 0.9266666666666666), (41, 0.94), (42, 0.94), (43, 0.9333333333333333), (44, 0.9533333333333334), (45, 0.94), (46, 0.9533333333333334), (47, 0.94), (48, 0.94), (49, 0.9533333333333334), (50, 0.9533333333333334)]}my_iris_app | INFO flwr 2024-01-16 15:58:09,241 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | INFO flwr 2024-01-16 15:58:09,241 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | INFO flwr 2024-01-16 15:58:09,242 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:58:09,243 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:58:09,243 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:58:09,244 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:58:09,244 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:58:09,243 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:58:09,246 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:58:09,247 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | DEBUG flwr 2024-01-16 15:58:09,247 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | DEBUG flwr 2024-01-16 15:58:09,249 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:58:09,263 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:58:09,264 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:58:09,264 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | INFO flwr 2024-01-16 15:58:09,266 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:58:09,266 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:58:09,267 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:58:09,268 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | DEBUG flwr 2024-01-16 15:58:09,270 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:58:23,814 | client.py:153 | Final accuracy: 0.9733333333333334
+my_iris_app | INFO flwr 2024-01-16 15:58:23,814 | client.py:154 | Final loss: 34.34459470771253
+my_iris_app | INFO flwr 2024-01-16 15:58:23,815 | client.py:153 | Final accuracy: 0.9733333333333334
+my_iris_app | INFO flwr 2024-01-16 15:58:23,815 | client.py:154 | Final loss: 34.34459470771253
+my_iris_app | INFO flwr 2024-01-16 15:58:23,815 | client.py:153 | Final accuracy: 0.9733333333333334
+my_iris_app | INFO flwr 2024-01-16 15:58:23,815 | client.py:154 | Final loss: 34.34459470771253
+my_iris_app | INFO flwr 2024-01-16 15:58:23,816 | client.py:153 | Final accuracy: 0.9733333333333334
+my_iris_app | INFO flwr 2024-01-16 15:58:23,816 | client.py:154 | Final loss: 34.34459470771253
+my_iris_app | INFO flwr 2024-01-16 15:58:23,816 | client.py:153 | Final accuracy: 0.9733333333333334
+my_iris_app | INFO flwr 2024-01-16 15:58:23,816 | client.py:154 | Final loss: 34.34459470771253
+my_iris_app | DEBUG flwr 2024-01-16 15:58:23,820 | connection.py:139 | gRPC channel closed
+my_iris_app | DEBUG flwr 2024-01-16 15:58:23,820 | connection.py:139 | gRPC channel closed
+my_iris_app | INFO flwr 2024-01-16 15:58:23,820 | app.py:169 | Disconnect and shut down
+my_iris_app | DEBUG flwr 2024-01-16 15:58:23,820 | connection.py:139 | gRPC channel closed
+my_iris_app | INFO flwr 2024-01-16 15:58:23,820 | app.py:169 | Disconnect and shut down
+my_iris_app | DEBUG flwr 2024-01-16 15:58:23,820 | connection.py:139 | gRPC channel closed
+my_iris_app | INFO flwr 2024-01-16 15:58:23,820 | app.py:169 | Disconnect and shut down
+my_iris_app | INFO flwr 2024-01-16 15:58:23,820 | app.py:169 | Disconnect and shut down
+my_iris_app | DEBUG flwr 2024-01-16 15:58:23,820 | connection.py:139 | gRPC channel closed
+my_iris_app | INFO flwr 2024-01-16 15:58:23,820 | app.py:169 | Disconnect and shut down
+ app_fit: losses_distributed [(1, 148.6460418701172), (2, 121.44864654541016), (3, 109.44129180908203), (4, 101.50841522216797), (5, 95.40208435058594), (6, 90.67658996582031), (7, 86.71685791015625), (8, 83.56360626220703), (9, 80.76445770263672), (10, 78.37291717529297), (11, 76.00361633300781), (12, 74.06045532226562), (13, 72.51176452636719), (14, 70.6710205078125), (15, 69.07469177246094), (16, 67.747314453125), (17, 66.35176086425781), (18, 64.88128662109375), (19, 63.6252555847168), (20, 62.60596466064453), (21, 61.347347259521484), (22, 59.83573532104492), (23, 58.97233581542969), (24, 57.998313903808594), (25, 56.527320861816406), (26, 55.36841583251953), (27, 54.45718765258789), (28, 53.483909606933594), (29, 52.56122589111328), (30, 51.8123664855957), (31, 50.574729919433594), (32, 49.650718688964844), (33, 48.874977111816406), (34, 48.05231475830078), (35, 47.714969635009766), (36, 46.5078010559082), (37, 45.54938507080078), (38, 45.40085220336914), (39, 44.57804870605469), (40, 43.86558151245117), (41, 43.2322883605957), (42, 42.81489181518555), (43, 41.840328216552734), (44, 41.661617279052734), (45, 41.278831481933594), (46, 40.466609954833984), (47, 40.282344818115234), (48, 39.5463981628418), (49, 39.11491012573242), (50, 38.686763763427734)]
+INFO flwr 2024-01-16 15:58:23,817 | app.py:226 | app_fit: metrics_distributed_fit {}
+INFO flwr 2024-01-16 15:58:23,817 | app.py:227 | app_fit: metrics_distributed {'accuracy': [(1, 0.6866666666666666), (2, 0.72), (3, 0.6133333333333333), (4, 0.6133333333333333), (5, 0.6133333333333333), (6, 0.6133333333333333), (7, 0.64), (8, 0.64), (9, 0.6666666666666666), (10, 0.6733333333333333), (11, 0.6933333333333334), (12, 0.72), (13, 0.72), (14, 0.74), (15, 0.7666666666666668), (16, 0.7733333333333333), (17, 0.78), (18, 0.7866666666666666), (19, 0.7933333333333333), (20, 0.7866666666666666), (21, 0.8), (22, 0.8333333333333334), (23, 0.8333333333333334), (24, 0.8333333333333334), (25, 0.86), (26, 0.88), (27, 0.88), (28, 0.88), (29, 0.8933333333333333), (30, 0.8866666666666667), (31, 0.92), (32, 0.9266666666666666), (33, 0.9266666666666666), (34, 0.9266666666666666), (35, 0.92), (36, 0.9266666666666666), (37, 0.9266666666666666), (38, 0.9266666666666666), (39, 0.9266666666666666), (40, 0.9266666666666666), (41, 0.9266666666666666), (42, 0.9266666666666666), (43, 0.9333333333333333), (44, 0.9333333333333333), (45, 0.9333333333333333), (46, 0.9333333333333333), (47, 0.9333333333333333), (48, 0.9333333333333333), (49, 0.9333333333333333), (50, 0.9333333333333333)]}my_iris_app | INFO flwr 2024-01-16 15:59:47,024 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:59:47,026 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:59:47,027 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:59:47,030 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:59:47,036 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:59:47,039 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:59:47,039 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:59:47,042 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:59:47,092 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:59:47,092 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:59:47,093 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:59:47,096 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 15:59:47,104 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | INFO flwr 2024-01-16 15:59:47,105 | grpc.py:49 | Opened insecure gRPC connection (no certificates were passed)
+my_iris_app | DEBUG flwr 2024-01-16 15:59:47,105 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:59:47,105 | connection.py:42 | ChannelConnectivity.CONNECTING
+my_iris_app | DEBUG flwr 2024-01-16 15:59:47,109 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | DEBUG flwr 2024-01-16 15:59:47,109 | connection.py:42 | ChannelConnectivity.IDLE
+my_iris_app | DEBUG flwr 2024-01-16 15:59:47,112 | connection.py:42 | ChannelConnectivity.READY
+my_iris_app | INFO flwr 2024-01-16 16:00:01,759 | client.py:153 | Final accuracy: 0.3333333333333333
+my_iris_app | INFO flwr 2024-01-16 16:00:01,760 | client.py:154 | Final loss: 164.85861587524414
+my_iris_app | INFO flwr 2024-01-16 16:00:01,760 | client.py:153 | Final accuracy: 0.3333333333333333
+my_iris_app | INFO flwr 2024-01-16 16:00:01,760 | client.py:154 | Final loss: 164.85861587524414
+my_iris_app | INFO flwr 2024-01-16 16:00:01,761 | client.py:153 | Final accuracy: 0.3333333333333333
+my_iris_app | INFO flwr 2024-01-16 16:00:01,761 | client.py:154 | Final loss: 164.85861587524414
+my_iris_app | INFO flwr 2024-01-16 16:00:01,777 | client.py:153 | Final accuracy: 0.3333333333333333
+my_iris_app | INFO flwr 2024-01-16 16:00:01,777 | client.py:154 | Final loss: 164.85861587524414
+my_iris_app | INFO flwr 2024-01-16 16:00:01,777 | client.py:153 | Final accuracy: 0.3333333333333333
+my_iris_app | INFO flwr 2024-01-16 16:00:01,777 | client.py:154 | Final loss: 164.85861587524414
+my_iris_app | DEBUG flwr 2024-01-16 16:00:01,781 | connection.py:139 | gRPC channel closed
+my_iris_app | DEBUG flwr 2024-01-16 16:00:01,781 | connection.py:139 | gRPC channel closed
+my_iris_app | DEBUG flwr 2024-01-16 16:00:01,781 | connection.py:139 | gRPC channel closed
+my_iris_app | DEBUG flwr 2024-01-16 16:00:01,781 | connection.py:139 | gRPC channel closed
+my_iris_app | DEBUG flwr 2024-01-16 16:00:01,781 | connection.py:139 | gRPC channel closed
+my_iris_app | INFO flwr 2024-01-16 16:00:01,781 | app.py:169 | Disconnect and shut down
+my_iris_app | INFO flwr 2024-01-16 16:00:01,781 | app.py:169 | Disconnect and shut down
+my_iris_app | INFO flwr 2024-01-16 16:00:01,781 | app.py:169 | Disconnect and shut down
+my_iris_app | INFO flwr 2024-01-16 16:00:01,781 | app.py:169 | Disconnect and shut down
+my_iris_app | INFO flwr 2024-01-16 16:00:01,781 | app.py:169 | Disconnect and shut down
+FL finished in 14.745516868999857
+INFO flwr 2024-01-16 16:00:01,778 | app.py:225 | app_fit: losses_distributed [(1, 171.11642456054688), (2, 168.85450744628906), (3, 167.53231811523438), (4, 166.735107421875), (5, 166.24363708496094), (6, 165.93516540527344), (7, 165.73507690429688), (8, 165.6065216064453), (9, 165.52073669433594), (10, 165.4655303955078), (11, 165.42742919921875), (12, 165.40277099609375), (13, 165.38519287109375), (14, 165.37155151367188), (15, 165.36500549316406), (16, 165.3603515625), (17, 165.356689453125), (18, 165.35479736328125), (19, 165.35537719726562), (20, 165.3536376953125), (21, 165.3514404296875), (22, 165.35165405273438), (23, 165.3500213623047), (24, 165.34976196289062), (25, 165.3494873046875), (26, 165.3488311767578), (27, 165.3499755859375), (28, 165.3512420654297), (29, 165.3508758544922), (30, 165.3502655029297), (31, 165.34934997558594), (32, 165.34776306152344), (33, 165.34869384765625), (34, 165.34925842285156), (35, 165.34950256347656), (36, 165.35086059570312), (37, 165.35084533691406), (38, 165.3509979248047), (39, 165.3501434326172), (40, 165.3497314453125), (41, 165.3494415283203), (42, 165.3503875732422), (43, 165.35157775878906), (44, 165.3500213623047), (45, 165.35067749023438), (46, 165.35133361816406), (47, 165.34967041015625), (48, 165.35043334960938), (49, 165.34967041015625), (50, 165.3496551513672)]
+INFO flwr 2024-01-16 16:00:01,778 | app.py:226 | app_fit: metrics_distributed_fit {}
+INFO flwr 2024-01-16 16:00:01,778 | app.py:227 | app_fit: metrics_distributed {'accuracy': [(1, 0.3), (2, 0.3), (3, 0.3), (4, 0.3), (5, 0.3), (6, 0.3), (7, 0.3), (8, 0.3), (9, 0.3), (10, 0.3), (11, 0.3), (12, 0.3), (13, 0.3), (14, 0.3), (15, 0.3), (16, 0.3), (17, 0.3), (18, 0.3), (19, 0.3), (20, 0.3), (21, 0.3), (22, 0.3), (23, 0.3), (24, 0.3), (25, 0.3), (26, 0.3), (27, 0.3), (28, 0.3), (29, 0.3), (30, 0.3), (31, 0.3), (32, 0.3), (33, 0.3), (34, 0.3), (35, 0.3), (36, 0.3), (37, 0.3), (38, 0.3), (39, 0.3), (40, 0.3), (41, 0.3), (42, 0.3), (43, 0.3), (44, 0.3), (45, 0.3), (46, 0.3), (47, 0.3), (48, 0.3), (49, 0.3), (50, 0.3)]}
