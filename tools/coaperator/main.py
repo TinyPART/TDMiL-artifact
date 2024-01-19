@@ -56,7 +56,8 @@ async def get_model(uid: uuid.UUID):
 @app.post(path="/models")
 async def submit_model(model: MLModel):
     store = MLModelStore()
-    store.add_model(model)
+    identifier = store.add_model(model)
+    return {"identifier": identifier}
 
 
 @app.get(path="/models", response_model=List[BaseMLModel])
