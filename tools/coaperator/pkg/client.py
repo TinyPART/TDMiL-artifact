@@ -6,7 +6,7 @@ from pkg.channel import CoapChannel
 from pkg.mlcontrol import MLController
 
 
-class Device(Registration):
+class Client(Registration):
     def __init__(
         self,
         static_registration_parameters,
