@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2015-2016 Ken Bannister. All rights reserved.
+ * Copyright (c) 2024 Koen Zandberg.:w
+ *
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -41,6 +42,7 @@ static const shell_command_t shell_commands[] = {
 };
 
 static coap_channel_t channel;
+static mlcontrol_t control;
 
 int main(void)
 {
@@ -50,7 +52,7 @@ int main(void)
 
     ztimer_sleep(ZTIMER_MSEC, 1000);
 
-    mlcontrol_init(&channel);
+    mlcontrol_init(&control, &channel);
 
     puts("starting thread");
 

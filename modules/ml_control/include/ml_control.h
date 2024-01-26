@@ -35,6 +35,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 
+#include "uuid.h"
 #include "coap_channel.h"
 #include "net/gcoap.h"
 #include "net/nanocoap.h"
@@ -44,9 +45,31 @@
 extern "C" {
 #endif
 
-#define CONFIG_MLCONTROL_PATH       "/ml"
+#define CONFIG_MLCONTROL_PATH       "/ev"
+#define CONFIG_MLCONTROL_MODEL_PATH       "/ml"
+#define MLCONTROL_STACK_SIZE        4096
+#define MLCONTROL_FETCH_ARG_SIZE        128
 
-void mlcontrol_init(coap_channel_t *channel);
+typedef enum {
+    MLCONTROL_ERR_INVALID_REQ_STRUCTURE = 0,
+} mlcontrol_error_t;
+
+typedef struct {
+    uuid_t identifier;
+    uint8_t model_layer_args[MLCONTROL_FETCH_ARG_SIZE];
+    size_t args_len;
+    size_t current_block;
+    sock_udp_ep_t remote;
+} mlcontrol_model_fetch_t;
+
+typedef struct {
+    event_t fetch_ev;
+    coap_channel_t *channel;
+    event_queue_t queue;
+    mlcontrol_model_fetch_t fetch;
+} mlcontrol_t;
+
+void mlcontrol_init(mlcontrol_t *control, coap_channel_t *channel);
 
 #ifdef __cplusplus
 }
