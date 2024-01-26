@@ -52,5 +52,5 @@ The CoAPerator orchestrator application written in Python requires at least
 
 The main experiment is the CoAPerator orchestrator together with the
 `FL_ML_client` in the `apps/FL_ML_client` directory. The README.md file in the
-`apps/FL_ML_demo` directory contains further instructions on how to use the
+`apps/FL_ML_client` directory contains further instructions on how to use the
 demo application
