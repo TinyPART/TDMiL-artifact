@@ -53,7 +53,7 @@ class CoapChannel(object):
     def _observe_err(self, *args):
         self.logger.error(f"error observe: {args}")
 
-    async def start_observe(self):
+    async def start_observe(self, channel_cb, err_cb):
         network_base = self.remote.uri
         uri = network_base + self.endpoint
         observe_message = aiocoap.Message(code=aiocoap.Code.GET, uri=uri)
@@ -63,5 +63,5 @@ class CoapChannel(object):
             await self.observe_req.response
         except aiocoap.error.Error as e:
             self.logger.error(f"Unable to establish observe channel: {e}")
-        self.observe_req.observation.register_errback(self._observe_err)
-        self.observe_req.observation.register_callback(self._observe_result)
+        self.observe_req.observation.register_errback(channel_cb)
+        self.observe_req.observation.register_callback(err_cb)

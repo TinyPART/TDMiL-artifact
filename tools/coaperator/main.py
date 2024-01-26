@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 import uuid
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, status
 import uvicorn
 import aiocoap.resource
 import aiocoap.error
 from aiocoap.numbers.contentformat import ContentFormat
-from typing import List
+from typing import List, Union
 from pkg.site import coapsite
 import logging
 from models.device import DevModel
 from models.ml import MLModel, BaseMLModel
+from models.control import BaseControl, ControlResponse
 from pkg.mlmodelstore import MLModelStore
 
 app = FastAPI(title="coaperator")
@@ -65,6 +66,16 @@ async def get_model_list() -> List[BaseMLModel]:
     store = MLModelStore()
     models = store.list()
     return [BaseMLModel(identifier=uid) for uid in models]
+
+@app.post(path="/control")
+async def post_control_data(rpc: BaseControl) -> ControlResponse:
+    if  rpc.command == "start" and len(rpc.args) == 1:
+        identifier = uuid.UUID(rpc.args[0])
+        model = MLModelStore().get_model(identifier)
+        devices = coapsite.rd.get_endpoints()
+        for device in devices:
+            await device.mlcontrol.submit_download_model(identifier, None)
+    return ControlResponse(reference=0)
 
 
 class Welcome(aiocoap.resource.Resource):
