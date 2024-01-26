@@ -1,3 +1,0 @@
-[submodule "RIOT"]
-	path = RIOT
-	url = git@github.com:TinyPART/RIOT.git
