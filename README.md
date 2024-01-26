@@ -50,7 +50,15 @@ The CoAPerator orchestrator application written in Python requires at least
 
 ## Experiments
 
+### Quick start
+
 The main experiment is the CoAPerator orchestrator together with the
-`FL_ML_client` in the `apps/FL_ML_client` directory. The README.md file in the
-`apps/FL_ML_client` directory contains further instructions on how to use the
-demo application
+`FL_ML_client` in the `apps/FL_ML_client` directory. 
+The README.md file in the `apps/FL_ML_client` directory contains further
+instructions on how to use the demo application.
+
+### Other experiments
+
+The other experiments in the `apps` directory contain stand-alone experiments
+to run machine learning models on the firmware. Head to these directories for
+instructions on how to run them
