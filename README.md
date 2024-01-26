@@ -50,15 +50,13 @@ The CoAPerator orchestrator application written in Python requires at least
 
 ## Experiments
 
-### Quick start
+### Basic experiment
 
-The main experiment is the CoAPerator orchestrator together with the
-`FL_ML_client` in the `apps/FL_ML_client` directory. 
-The README.md file in the `apps/FL_ML_client` directory contains further
-instructions on how to use the demo application.
+The first experiment launches CoAPerator (the orchestrator) and then a client (TDMiL).
+The client can then be instructed via CoAPerator to download a model via CoAP.
+For this, please follow the instructions in `apps/FL_ML_client/readme.md`
 
 ### Other experiments
+Additional experiments can be found in the `apps` directory. Head to these directories for
+instructions on how to run them.
 
-The other experiments in the `apps` directory contain stand-alone experiments
-to run machine learning models on the firmware. Head to these directories for
-instructions on how to run them
