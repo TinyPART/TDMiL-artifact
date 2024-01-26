@@ -9,7 +9,7 @@ This repository consists of multiple directories with components.
 
 - **RIOT**: The directory containing the RIOT source code with minimal modifications
 - **apps**: Demonstration firmware application for the research artifact using RIOT
-as RTOS
+as RTOS.
 - **coaperator**: The CoAPerator orchestrator application written in Python
 - **modules**: Custom modules for the RIOT-based firmware applications
 - **radvd.d**: Default configuration for a router advertisement daemon
@@ -47,3 +47,10 @@ These can be installed on Debian and Ubuntu via
 The CoAPerator orchestrator application written in Python requires at least
 `Python 3.11`. The python dependencies can be installed using
 [poetry](https://python-poetry.org/) as detailed in the `coaperator` directory.
+
+## Experiments
+
+The main experiment is the CoAPerator orchestrator together with the
+`FL_ML_client` in the `apps/FL_ML_client` directory. The README.md file in the
+`apps/FL_ML_demo` directory contains further instructions on how to use the
+demo application
