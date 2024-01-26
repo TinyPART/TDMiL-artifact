@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 
+#include "net/sock/udp.h"
 #include "net/gcoap.h"
 #include "net/nanocoap.h"
 #include "net/coap.h"
@@ -42,17 +43,19 @@ typedef struct {
     uint8_t cache_key[32];
     size_t offset;
     size_t num;
+    void *ctx;
+    sock_udp_ep_t *remote;
 } coap_channel_memo_t;
 
 typedef int (*coap_channel_callback_t)(coap_channel_t *channel,  void *payload, size_t payload_len, const coap_channel_memo_t *memo);
 
 struct coap_channel {
+    void *ctx;
     coap_channel_callback_t callback;
     gcoap_listener_t listener;
     coap_resource_t endpoint;
 };
 
-void coap_channel_init(coap_channel_t *channel, const char *path, coap_channel_callback_t callback);
 
 /**
  * @brief Sends a CoAP payload through the specified channel.
@@ -86,7 +89,7 @@ int coap_channel_submit_payload(coap_channel_t *channel, void *buf, size_t buf_l
  * @param callback Callback function to handle channel events.
  *                 The function signature must match 'coap_channel_callback_t'.
  */
-void coap_channel_init(coap_channel_t *channel, const char *path, coap_channel_callback_t callback);
+void coap_channel_init(coap_channel_t *channel, const char *path, coap_channel_callback_t callback, void *ctx);
 
 #ifdef __cplusplus
 }

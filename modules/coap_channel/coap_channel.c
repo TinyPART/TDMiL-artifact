@@ -45,7 +45,7 @@ int coap_channel_send_payload(coap_channel_t *channel, uint8_t *payload, size_t 
     return 0;
 }
 
-static ssize_t _endpoint_handle_post(coap_pkt_t *pkt, uint8_t *buf, size_t len, coap_channel_t *channel)
+static ssize_t _endpoint_handle_post(coap_pkt_t *pkt, uint8_t *buf, size_t len, coap_channel_t *channel, coap_request_ctx_t *context)
 {
     uint8_t req_buf[128];
     coap_channel_memo_t memo;
@@ -53,6 +53,8 @@ static ssize_t _endpoint_handle_post(coap_pkt_t *pkt, uint8_t *buf, size_t len, 
 
     memo.payload_len = MIN(sizeof(req_buf), pkt->payload_len);
     memo.payload = req_buf;
+    memo.ctx = channel->ctx;
+    memo.remote = context->remote;
 
     memcpy(req_buf, pkt->payload, memo.payload_len);
     gcoap_resp_init(pkt, buf, len, COAP_CODE_CHANGED);
@@ -72,7 +74,7 @@ static ssize_t _endpoint_handle_post(coap_pkt_t *pkt, uint8_t *buf, size_t len, 
 
 static ssize_t _endpoint_handler(coap_pkt_t *pkt, uint8_t *buf, size_t len, coap_request_ctx_t *context)
 {
-    coap_channel_t *channel = context->resource->context;
+    coap_channel_t *channel = coap_request_ctx_get_context(context);
     (void)buf;
     (void)len;
 
@@ -86,17 +88,18 @@ static ssize_t _endpoint_handler(coap_pkt_t *pkt, uint8_t *buf, size_t len, coap
             return resp_len;
         case COAP_POST:
         {
-            return _endpoint_handle_post(pkt, buf, len, channel);
+            return _endpoint_handle_post(pkt, buf, len, channel, context);
         }
     }
     return 0;
 }
 
-void coap_channel_init(coap_channel_t *channel, const char *path, coap_channel_callback_t callback)
+void coap_channel_init(coap_channel_t *channel, const char *path, coap_channel_callback_t callback, void *ctx)
 {
     memset(channel, 0, sizeof(coap_channel_t));
 
     channel->callback = callback;
+    channel->ctx = ctx;
 
     channel->endpoint.path = path;
     channel->endpoint.methods = COAP_GET | COAP_POST;
