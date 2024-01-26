@@ -1,12 +1,12 @@
-CoAP Comm experimental code
-=========================
+Federated Learning experimental code
+====================================
 
 This RIOT application starts an experimental CoAP communication channel with the
 CoAPerator application.
 
 It registers itself with the CoAPerator server and allows for setting up the
-communication channel. Nothing is implemented on the communication channel at
-this point.
+communication channel. Via this channel the CoAPerator orchestrator can request
+status commands and submit commands to the clients
 
 ## Configuration
 
@@ -26,7 +26,8 @@ You now should have one bridge and two tap devices
 
 Set up a router advertisement to provide the devices with a prefix
 
-- Set up a configuration file for radvd
+- Set up a configuration file for radvd, as found in the `radvd.d` directory of
+the repository
 
 ```
 interface tapbr0
@@ -52,13 +53,13 @@ sudo radvd -n -C radvd.d/radvd.conf -p radvd.d/radvd.pid
 Start the coaperator python application
 
 ```
-uvicorn main:app  --workers 0
+uvicorn main:app  --workers 0 --host ::1
 ```
 
-And start the comm_stack example
+And start the fl_rpc example
 
 ```
-make -C apps/comm_stack/ term
+make -C apps/fl_rpc/ term
 ```
 
 After starting all applications, make sure that the RIOT instance can be reached
@@ -71,3 +72,28 @@ coaperator logs this (exact line might change):
 ```
 INFO:device/RIOT-6581A869BAFF5CA1:New device at 2001:db8::d83c:a5ff:fe9c:3a41
 ```
+
+On the CoAPerator, machine learning models can be added via the HTTP+JSON api
+using curl:
+
+```
+curl -X POST -H 'content-type: application/json' -d @coaperator/tests/iris.json localhost:8000/models
+```
+
+This loads the model into the machine learning model store of CoAPerator. The
+CoAPerator replies with the identifier of the model.
+
+After this, the registered clients can be instructed to download and start the
+model process via the orchestrator.
+This is done by sending the start command to the orchestrator together with the
+identifier of the model:
+
+```
+curl -X POST -H 'content-type: application/json'  localhost:8000/control -d '{ "command": "start", "args": ["c88b1f35761a489796e689921065e176"]}'
+```
+
+The fl_rpc clients registered to the CoAPerator will now receive a command from
+CoAPerator to start downloading the model, after which they will start the
+model download from the CoAPerator via separate CoAP FETCH requests.
+At last the client application should print a line stating that the model has
+been downloaded
