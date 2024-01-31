@@ -56,10 +56,10 @@ Start the coaperator python application
 uvicorn main:app  --workers 0 --host ::1
 ```
 
-And start the fl_rpc example
+And start the FL_ML_client example
 
 ```
-make -C apps/fl_rpc/ term
+make -C apps/FL_ML_client/ term
 ```
 
 After starting all applications, make sure that the RIOT instance can be reached
@@ -92,7 +92,7 @@ identifier of the model:
 curl -X POST -H 'content-type: application/json'  localhost:8000/control -d '{ "command": "start", "args": ["c88b1f35761a489796e689921065e176"]}'
 ```
 
-The fl_rpc clients registered to the CoAPerator will now receive a command from
+The FL_ML_client clients registered to the CoAPerator will now receive a command from
 CoAPerator to start downloading the model, after which they will start the
 model download from the CoAPerator via separate CoAP FETCH requests.
 At last the client application should print a line stating that the model has
