@@ -19,7 +19,7 @@ provided by CoAPerator
 Set up networking on the host using the tap script provided by RIOT:
 
 ```Shellsession
-sudo ./dist/tools/tapsetup/tapsetup -c
+sudo RIOT/dist/tools/tapsetup/tapsetup -c
 ```
 
 You now should have one bridge and two tap devices
