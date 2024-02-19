@@ -225,6 +225,56 @@ static void _upload_resp_handler(const gcoap_request_memo_t *memo, coap_pkt_t *p
     event_post(&control->queue, &control->upload_ev);
 }
 
+static void _fmt_dummy_parameters(nanocbor_encoder_t *enc)
+{
+    nanocbor_fmt_array(enc, 4);
+
+    nanocbor_fmt_array(enc, 2);
+    nanocbor_put_tstr(enc, "w1");
+    nanocbor_fmt_array(enc, 8);
+    for (size_t i=0; i < 8; i++) {
+        nanocbor_fmt_uint(enc, i);
+    }
+
+    nanocbor_fmt_array(enc, 2);
+    nanocbor_put_tstr(enc, "w2");
+    nanocbor_fmt_array(enc, 6);
+    for (size_t i=0; i < 6; i++) {
+        nanocbor_fmt_uint(enc, i);
+    }
+
+    nanocbor_fmt_array(enc, 2);
+    nanocbor_put_tstr(enc, "b1");
+    nanocbor_fmt_array(enc, 2);
+    for (size_t i=0; i < 2; i++) {
+        nanocbor_fmt_uint(enc, i);
+    }
+
+    nanocbor_fmt_array(enc, 2);
+    nanocbor_put_tstr(enc, "b2");
+    nanocbor_fmt_array(enc, 3);
+    for (size_t i=0; i < 3; i++) {
+        nanocbor_fmt_uint(enc, i);
+    }
+}
+
+static void _fmt_dummy_operators(nanocbor_encoder_t *enc)
+{
+    nanocbor_fmt_array(enc, 2);
+
+    nanocbor_fmt_array(enc, 2);
+    nanocbor_put_tstr(enc, "1");
+    nanocbor_fmt_array(enc, 2);
+    nanocbor_fmt_uint(enc, 0);
+    nanocbor_fmt_uint(enc, 2);
+
+    nanocbor_fmt_array(enc, 2);
+    nanocbor_put_tstr(enc, "2");
+    nanocbor_fmt_array(enc, 2);
+    nanocbor_fmt_uint(enc, 1);
+    nanocbor_fmt_uint(enc, 3);
+}
+
 static ssize_t _format_upload_payload(mlcontrol_t *control, coap_pkt_t *pdu, coap_block_slicer_t *slicer)
 {
     (void)control;
@@ -237,8 +287,8 @@ static ssize_t _format_upload_payload(mlcontrol_t *control, coap_pkt_t *pdu, coa
     nanocbor_fmt_tag(&enc, 37);
     nanocbor_put_bstr(&enc, (void*)&control->upload.identifier, sizeof(uuid_t));
 
-    nanocbor_fmt_array(&enc, 0);
-    nanocbor_fmt_array(&enc, 0);
+    _fmt_dummy_parameters(&enc);
+    _fmt_dummy_operators(&enc);
 
     nanocbor_fmt_array(&enc, 2);
     nanocbor_fmt_uint(&enc, 900);
