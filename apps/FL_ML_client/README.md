@@ -67,10 +67,17 @@ via the configured prefix. Verify that it has the prefix via the `ifconfig` shel
 command.
 
 The RIOT shell should also automatically start registration on coaperator.
-coaperator logs this (exact line might change):
+coaperator logs this (exact line differs based on the client ID and address):
 
 ```
 INFO:device/RIOT-6581A869BAFF5CA1:New device at 2001:db8::d83c:a5ff:fe9c:3a41
+```
+
+All registered devices and their client identifier with the orchestrator can be
+found at the `/devices` endpoint:
+
+```
+curl localhost:8000/devices
 ```
 
 On the CoAPerator, machine learning models can be added via the HTTP+JSON api
@@ -97,3 +104,22 @@ CoAPerator to start downloading the model, after which they will start the
 model download from the CoAPerator via separate CoAP FETCH requests.
 At last the client application should print a line stating that the model has
 been downloaded
+
+The training process on the client can be stopped by the orchestrator by
+submitting a `stop` RPC to CoAPerator with the model to stop:
+
+```
+curl -X POST -H 'content-type: application/json'  localhost:8000/control -d '{ "command": "start", "args": ["c88b1f35761a489796e689921065e176"]}'
+```
+
+All registered clients are now signalled to stop the training process and submit
+their training data to the orchestrator.
+The training data can be requested from the orchestrator via an endpoint
+provided at `/device/<dev_id>/training/<model_uuid>`. Matching the example
+above with the client ID:
+
+```
+curl localhost:8000/device/RIOT-6581A869BAFF5CA1/training/c88b1f35-761a-4897-96e6-89921065e176
+```
+
+This provides the (dummy) training data provided by the clients
