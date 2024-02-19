@@ -1,12 +1,13 @@
 import asyncio
 import enum
 import logging
+import typing
+import uuid
 
+from models.ml import MLTrainingModel
 from pkg.corerd import Registration
 from pkg.channel import CoapChannel
 from pkg.mlcontrol import MLController
-
-
 
 
 class Client(Registration):
@@ -44,6 +45,7 @@ class Client(Registration):
         self.channel = CoapChannel(network_remote, "/ev", context)
         self.remote = network_remote
         self.mlcontrol = MLController(self.channel)
+        self.training_data: Dict[UUID, any] = {}
         asyncio.create_task(self._start_channel())
         asyncio.create_task(self._maintain_status())
 
@@ -64,3 +66,9 @@ class Client(Registration):
             await asyncio.sleep(5)
             status = await self.mlcontrol.get_status()
             self.logger.info(f"{status}")
+
+    def add_training(self, uid: uuid.UUID, data: MLTrainingModel):
+        self.training_data[uid] = data
+
+    def get_training(self, uid) -> MLTrainingModel:
+        return self.training_data.get(uid, None)

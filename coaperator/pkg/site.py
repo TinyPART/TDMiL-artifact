@@ -8,6 +8,7 @@ import cbor2
 from aiocoap.numbers.contentformat import ContentFormat
 import uuid
 import pkg.corerd as corerd
+from models.ml import MLTrainingModel
 from pkg.client import Client
 from pkg.mlmodelstore import MLModelStore
 
@@ -67,8 +68,14 @@ class ModelResource(aiocoap.resource.Resource):
         devices = coapsite.rd.get_endpoints()
         for device in devices:
             if device.remote == request.remote:
-                print(f"Matched {device} with request")
-        return aiocoap.Message(code=aiocoap.Code.CHANGED)
+                try:
+                    training_model = MLTrainingModel.from_cbor(content)
+                except Exception as e:
+                    print(f"Unable to decode cbor data: {e}")
+                    return aiocoap.Message(code=aiocoap.Code.NOT_ACCEPTABLE)
+                device.add_training(training_model.identifier, training_model)
+                return aiocoap.Message(code=aiocoap.Code.CHANGED)
+        return aiocoap.Message(code=aiocoap.Code.NOT_FOUND)
 
     # Correlate to client
     # Store training data

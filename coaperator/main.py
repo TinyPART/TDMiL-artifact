@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import uuid
 
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request, status, HTTPException
 import uvicorn
 import aiocoap.resource
 import aiocoap.error
@@ -10,7 +10,7 @@ from typing import List, Union
 from pkg.site import coapsite
 import logging
 from models.device import DevModel
-from models.ml import MLModel, BaseMLModel
+from models.ml import MLModel, BaseMLModel, MLTrainingModel
 from models.control import BaseControl, ControlResponse
 from pkg.mlmodelstore import MLModelStore
 
@@ -43,6 +43,21 @@ def read_devices():
 async def get_device(ep: str):
     dev = coapsite.rd.get_endpoint(ep)
     return DevModel.from_device(dev)
+
+
+@app.get(
+    path="/device/{ep}/training/{uid}",
+    response_model=MLTrainingModel,
+    summary="Retrieve a specific registered device by it's endpoint identifier",
+)
+async def get_device_training(ep: str, uid: uuid.UUID):
+    dev = coapsite.rd.get_endpoint(ep)
+    if dev is None:
+        raise HTTPException(status_code=404, detail="endpoint not found")
+    training = dev.get_training(uid)
+    if training is None:
+        raise HTTPException(status_code=404, detail="Training model data not found")
+    return training
 
 
 @app.get(
