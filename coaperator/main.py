@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import logging
 import uuid
 
 from fastapi import FastAPI, Request, status, HTTPException
@@ -93,7 +94,7 @@ async def post_control_data(rpc: BaseControl) -> ControlResponse:
         identifier = uuid.UUID(rpc.args[0])
         devices = coapsite.rd.get_endpoints()
         for device in devices:
-            print(f"Submitting stop to {device} with {identifier}")
+            logging.info(f"Submitting stop to {device} with {identifier}")
             await device.mlcontrol.submit_upload_training(identifier, None)
     return ControlResponse(reference=0)
 

@@ -64,14 +64,14 @@ class ModelResource(aiocoap.resource.Resource):
             content = cbor2.loads(payload)
         except cbor2.CBORDecodeError:
             return aiocoap.Message(code=aiocoap.Code.NOT_ACCEPTABLE)
-        print(f"Received {content} from device {request.remote}")
+        logging.info(f"Received {content} from device {request.remote}")
         devices = coapsite.rd.get_endpoints()
         for device in devices:
             if device.remote == request.remote:
                 try:
                     training_model = MLTrainingModel.from_cbor(content)
                 except Exception as e:
-                    print(f"Unable to decode cbor data: {e}")
+                    logging.error(f"Unable to decode cbor data: {e}")
                     return aiocoap.Message(code=aiocoap.Code.NOT_ACCEPTABLE)
                 device.add_training(training_model.identifier, training_model)
                 return aiocoap.Message(code=aiocoap.Code.CHANGED)
