@@ -1,6 +1,7 @@
 """Async communication channel from/to CoAP clients."""
 import aiocoap
 import aiocoap.error
+import aiocoap.numbers.contentformat
 import logging
 from typing import Optional
 
@@ -38,7 +39,8 @@ class CoapChannel(object):
         network_base = self.remote.uri
         uri = network_base + self.endpoint
         request = aiocoap.Message(
-            uri=uri, mtype=aiocoap.CON, code=aiocoap.Code.POST, payload=payload
+            uri=uri, mtype=aiocoap.CON, code=aiocoap.Code.POST, payload=payload,
+            content_format=aiocoap.numbers.contentformat.ContentFormat.CBOR
         )
         try:
             response = await self.context.request(request).response

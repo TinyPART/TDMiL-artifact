@@ -57,20 +57,20 @@ class ModelResource(aiocoap.resource.Resource):
         if type(content[0]) is uuid.UUID:
             return self.render_model(content[0])
 
-#    async def render(self, request):
-#        print(request.opt.uri_path)
-#        path = request.opt.uri_path
-#        if len(path) < 1:
-#            return aiocoap.Message(code=aiocoap.Code.NOT_FOUND)
-#
-#        uid = uuid.UUID(path[0])
-#        model = MLModelStore().get_model(uid)
-#        if model is None:
-#            return aiocoap.Message(code=aiocoap.Code.NOT_FOUND)
-#        if not request.code == aiocoap.Code.GET:
-#            raise aiocoap.error.UnsupportedMethod()
-#        msg = await self.render_model(uid)
-#        return msg
+    async def render_post(self, request):
+        payload = request.payload
+        try:
+            content = cbor2.loads(payload)
+        except cbor2.CBORDecodeError:
+            return aiocoap.Message(code=aiocoap.Code.NOT_ACCEPTABLE)
+        print(f"Received {content} from device {request.remote}")
+        devices = coapsite.rd.get_endpoints()
+        for device in devices:
+            if device.remote == request.remote:
+                print(f"Matched {device} with request")
+        return aiocoap.Message(code=aiocoap.Code.CHANGED)
 
+    # Correlate to client
+    # Store training data
 
 coapsite = CoaperatorSite()

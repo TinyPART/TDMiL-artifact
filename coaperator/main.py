@@ -71,10 +71,15 @@ async def get_model_list() -> List[BaseMLModel]:
 async def post_control_data(rpc: BaseControl) -> ControlResponse:
     if  rpc.command == "start" and len(rpc.args) == 1:
         identifier = uuid.UUID(rpc.args[0])
-        model = MLModelStore().get_model(identifier)
         devices = coapsite.rd.get_endpoints()
         for device in devices:
             await device.mlcontrol.submit_download_model(identifier, None)
+    elif rpc.command == "stop" and len(rpc.args) == 1:
+        identifier = uuid.UUID(rpc.args[0])
+        devices = coapsite.rd.get_endpoints()
+        for device in devices:
+            print(f"Submitting stop to {device} with {identifier}")
+            await device.mlcontrol.submit_upload_training(identifier, None)
     return ControlResponse(reference=0)
 
 

@@ -10,6 +10,7 @@ MLCONTROL_RPC_STATUS = 0
 MLCONTROL_RPC_START = 1
 MLCONTROL_RPC_STOP = 2
 MLCONTROL_RPC_MODEL_FETCH = 3
+MLCONTROL_RPC_MODEL_STOP_POST = 4
 
 
 def cbor2_dumps_kwargs():
@@ -35,6 +36,17 @@ class MLController(object):
              ]
             , **cbor2_dumps_kwargs())
 
+    @staticmethod
+    def _fmt_upload_model(identifier: uuid.UUID, layers: List[str]):
+        return cbor.dumps(
+            [int(MLCONTROL_RPC_MODEL_STOP_POST),
+             [
+                 identifier,
+                 layers
+             ]
+             ]
+            , **cbor2_dumps_kwargs())
+
 
     async def get_status(self):
         payload = self._fmt_status()
@@ -46,5 +58,11 @@ class MLController(object):
     async def submit_download_model(self, identifier: uuid.UUID, layers: Optional[List[str]]):
         layers = layers or []
         payload = self._fmt_download_model(identifier, layers)
+        response = await self.channel.submit(payload)
+        return response
+
+    async def submit_upload_training(self, identifier: uuid.UUID, layers: Optional[List[str]]):
+        layers = layers or []
+        payload = self._fmt_upload_model(identifier, layers)
         response = await self.channel.submit(payload)
         return response

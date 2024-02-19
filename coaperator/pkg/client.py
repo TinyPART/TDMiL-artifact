@@ -42,6 +42,7 @@ class Client(Registration):
         self.logger = logging.getLogger(f"device.{name}")
         self.logger.info(f"New device at {network_remote.sockaddr[0]}")
         self.channel = CoapChannel(network_remote, "/ev", context)
+        self.remote = network_remote
         self.mlcontrol = MLController(self.channel)
         asyncio.create_task(self._start_channel())
         asyncio.create_task(self._maintain_status())
