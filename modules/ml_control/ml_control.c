@@ -15,6 +15,7 @@
 #include "net/gcoap.h"
 #include "net/coap.h"
 #include "uuid.h"
+#include "net/nanocoap/nanocbor_helper.h"
 
 #include "nanocbor/nanocbor.h"
 
@@ -99,12 +100,12 @@ static void _handle_fetch(event_t *ev)
     gcoap_req_send(buf, payload_len + len, &control->fetch.remote, _fetch_resp_handler, control);
 }
 
-static int _handle_rpc_status(coap_channel_t *channel, nanocbor_value_t *arr, nanocbor_encoder_t *encoder)
+static int _handle_rpc_status(mlcontrol_t *control, nanocbor_value_t *arr, nanocbor_encoder_t *encoder)
 {
-    (void)channel;
     (void)arr;
-    nanocbor_fmt_array(encoder, 1);
+    nanocbor_fmt_array(encoder, 2);
     nanocbor_fmt_uint(encoder, 0);
+    nanocbor_fmt_bool(encoder, control->training);
     return 0;
 }
 
@@ -144,22 +145,155 @@ static int _handle_rpc_fetch_model(mlcontrol_t* control, nanocbor_value_t *args,
 
     nanocbor_get_subcbor(&arr, &arguments, &arg_len);
 
+    control->training = true;
     _submit_fetch(control, memo->remote, (uuid_t*)uuid_bytes, arguments, arg_len);
-
+    nanocbor_fmt_array(encoder, 1);
+    nanocbor_fmt_uint(encoder, 0);
     return 0;
+}
+
+static void _submit_upload(mlcontrol_t *control, const sock_udp_ep_t *remote, uuid_t *uuid, const uint8_t *args, size_t len)
+{
+    memcpy(&control->upload.identifier, uuid, sizeof(uuid_t));
+    len = MIN(len, MLCONTROL_FETCH_ARG_SIZE);
+    memcpy(control->upload.model_layer_args, args, len);
+    memcpy(&control->upload.remote, remote, sizeof(sock_udp_ep_t));
+    control->upload.args_len = len;
+    control->upload.current_block = 0;
+    event_post(&control->queue, &control->upload_ev);
+}
+
+static int _handle_rpc_stop_upload_model(mlcontrol_t* control, nanocbor_value_t *args, nanocbor_encoder_t *encoder, const coap_channel_memo_t *memo)
+{
+    nanocbor_value_t arr;
+    puts("Stop and upload");
+    int res = nanocbor_enter_array(args, &arr);
+    if (res != NANOCBOR_OK) {
+        return _mlcontrol_send_error(encoder, MLCONTROL_ERR_INVALID_REQ_STRUCTURE, "Argument array not found");
+    }
+    uint32_t tag = 0;
+    res = nanocbor_get_tag(&arr, &tag);
+    if (res != NANOCBOR_OK) {
+        return _mlcontrol_send_error(encoder, MLCONTROL_ERR_INVALID_REQ_STRUCTURE, "UUID Tag not found");
+    }
+
+    if (tag != 37) {
+        return _mlcontrol_send_error(encoder, MLCONTROL_ERR_INVALID_REQ_STRUCTURE, "Incorrect tag in data structure");
+    }
+
+    const uint8_t *uuid_bytes = NULL;
+    size_t len = 0;
+
+    res = nanocbor_get_bstr(&arr, &uuid_bytes, &len);
+    if (res != NANOCBOR_OK) {
+        printf("No uuid found\n");
+        return _mlcontrol_send_error(encoder, MLCONTROL_ERR_INVALID_REQ_STRUCTURE, "UUID byte string not found");
+    }
+
+    if (len != sizeof(uuid_t)) {
+        return _mlcontrol_send_error(encoder, MLCONTROL_ERR_INVALID_REQ_STRUCTURE, "Invalid UUID length");
+    }
+
+    const uint8_t *arguments = NULL;
+    size_t arg_len = 0;
+
+    nanocbor_get_subcbor(&arr, &arguments, &arg_len);
+
+    control->upload.current_block = 0;
+
+    control->training = false;
+    _submit_upload(control, memo->remote, (uuid_t*)uuid_bytes, arguments, arg_len);
+
+    nanocbor_fmt_array(encoder, 1);
+    nanocbor_fmt_uint(encoder, 0);
+    return 0;
+}
+
+static void _upload_resp_handler(const gcoap_request_memo_t *memo, coap_pkt_t *pdu, const sock_udp_ep_t *remote)
+{
+    (void)remote;
+    mlcontrol_t *control = memo->context;
+    unsigned req_state = memo->state;
+    if (req_state == GCOAP_MEMO_RESP) {
+        if (coap_get_code_raw(pdu) == COAP_CODE_CONTINUE) {
+            control->upload.current_block++;
+        }
+        else {
+            control->upload.current_block = UINT32_MAX;
+        }
+    }
+    event_post(&control->queue, &control->upload_ev);
+}
+
+static ssize_t _format_upload_payload(mlcontrol_t *control, coap_pkt_t *pdu, coap_block_slicer_t *slicer)
+{
+    (void)control;
+    nanocbor_encoder_t enc;
+    coap_nanocbor_slicer_helper_t helper;
+    coap_nanocbor_slicer_helper_init(&helper, pdu, slicer);
+    coap_nanocbor_encoder_init(&enc, &helper);
+
+    nanocbor_fmt_array(&enc, 4);
+    nanocbor_fmt_tag(&enc, 37);
+    nanocbor_put_bstr(&enc, (void*)&control->upload.identifier, sizeof(uuid_t));
+
+    nanocbor_fmt_array(&enc, 0);
+    nanocbor_fmt_array(&enc, 0);
+
+    nanocbor_fmt_array(&enc, 2);
+    nanocbor_fmt_uint(&enc, 900);
+    nanocbor_fmt_uint(&enc, 750);
+    return coap_nanocbor_block1_finish(pdu, &helper);
+}
+
+static ssize_t _upload_fmt_req(mlcontrol_t *control, uint8_t *buf, size_t buf_len)
+{
+    coap_pkt_t pdu;
+    int res = gcoap_req_init(&pdu, buf, buf_len, COAP_METHOD_POST, CONFIG_MLCONTROL_MODEL_PATH);
+    if (res < 0) {
+        return res;
+    }
+    coap_block_slicer_t slicer;
+
+    coap_block_slicer_init(&slicer, control->upload.current_block, 64);
+    coap_hdr_set_type(pdu.hdr, COAP_TYPE_CON);
+    coap_opt_add_format(&pdu, COAP_FORMAT_CBOR);
+    coap_opt_add_block1(&pdu, &slicer, true);
+    coap_opt_finish(&pdu, COAP_OPT_FINISH_PAYLOAD);
+
+    return _format_upload_payload(control, &pdu, &slicer);
+}
+
+static void _handle_upload(event_t *ev)
+{
+    mlcontrol_t *control = container_of(ev, mlcontrol_t, upload_ev);
+    uint8_t pkt_buf[128];
+
+    if (control->upload.current_block == UINT32_MAX) {
+        puts("Done uploading model");
+        return;
+    }
+
+    ssize_t len = _upload_fmt_req(control, pkt_buf, sizeof(pkt_buf));
+    if (len > 0) {
+        int res = gcoap_req_send(pkt_buf, len, &control->upload.remote, _upload_resp_handler, control);
+        printf("Result from send block %u: %i\n", control->upload.current_block, res);
+    }
 }
 
 static int _handle_rpc(mlcontrol_t *control, nanocbor_value_t *arr, nanocbor_encoder_t *encoder, uint32_t rpc, const coap_channel_memo_t *memo)
 {
     switch (rpc) {
         case MLCONTROL_RPC_STATUS:
-            return _handle_rpc_status(control->channel, arr, encoder);
+            return _handle_rpc_status(control, arr, encoder);
         case MLCONTROL_RPC_START:
             return 0;
         case MLCONTROL_RPC_STOP:
             return 0;
         case MLCONTROL_RPC_FETCH_MODEL:
             return _handle_rpc_fetch_model(control, arr, encoder, memo);
+        case MLCONTROL_RPC_STOP_UPLOAD_MODEL:
+            return _handle_rpc_stop_upload_model(control, arr, encoder, memo);
         default:
             return -1;
     }
@@ -199,6 +333,8 @@ static void *_thread(void *arg) {
 
     control->fetch_ev.list_node.next = NULL;
     control->fetch_ev.handler = _handle_fetch;
+    control->upload_ev.list_node.next = NULL;
+    control->upload_ev.handler = _handle_upload;
     event_queue_init(&control->queue);
     coap_channel_init(control->channel, CONFIG_MLCONTROL_PATH, _channel_callback, control);
     event_loop(&control->queue);

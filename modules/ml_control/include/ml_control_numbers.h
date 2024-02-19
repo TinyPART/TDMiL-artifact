@@ -43,10 +43,11 @@ extern "C" {
 #endif
 
 typedef enum {
-    MLCONTROL_RPC_STATUS    = 0,
-    MLCONTROL_RPC_START     = 1,
-    MLCONTROL_RPC_STOP      = 2,
-    MLCONTROL_RPC_FETCH_MODEL      = 3,
+    MLCONTROL_RPC_STATUS                = 0,
+    MLCONTROL_RPC_START                 = 1,
+    MLCONTROL_RPC_STOP                  = 2,
+    MLCONTROL_RPC_FETCH_MODEL           = 3,
+    MLCONTROL_RPC_STOP_UPLOAD_MODEL     = 4,
 } mlcontrol_rpc_t;
 
 #ifdef __cplusplus

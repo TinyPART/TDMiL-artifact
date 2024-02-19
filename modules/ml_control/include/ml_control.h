@@ -63,10 +63,21 @@ typedef struct {
 } mlcontrol_model_fetch_t;
 
 typedef struct {
+    uuid_t identifier;
+    uint8_t model_layer_args[MLCONTROL_FETCH_ARG_SIZE];
+    size_t args_len;
+    size_t current_block;
+    sock_udp_ep_t remote;
+} mlcontrol_model_upload_t;
+
+typedef struct {
     event_t fetch_ev;
+    event_t upload_ev;
     coap_channel_t *channel;
     event_queue_t queue;
     mlcontrol_model_fetch_t fetch;
+    mlcontrol_model_upload_t upload;
+    bool training;
 } mlcontrol_t;
 
 void mlcontrol_init(mlcontrol_t *control, coap_channel_t *channel);
