@@ -2,7 +2,7 @@
 name = "coaperator"
 version = "0.1.0"
 description = "CoAP/HTTP FL/ML communication manager"
-authors = ["Koen Zandberg <koen.zandberg@fu-berlin.de"]
+authors = ["Koen Zandberg <koen.zandberg@fu-berlin.de>"]
 
 [tool.poetry.dependencies]
 aiocoap = {version="^0.4.7", extras=["dtls"]}

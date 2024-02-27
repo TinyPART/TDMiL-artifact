@@ -109,7 +109,7 @@ The training process on the client can be stopped by the orchestrator by
 submitting a `stop` RPC to CoAPerator with the model to stop:
 
 ```
-curl -X POST -H 'content-type: application/json'  localhost:8000/control -d '{ "command": "start", "args": ["c88b1f35761a489796e689921065e176"]}'
+curl -X POST -H 'content-type: application/json'  localhost:8000/control -d '{ "command": "stop", "args": ["c88b1f35761a489796e689921065e176"]}'
 ```
 
 All registered clients are now signalled to stop the training process and submit
@@ -119,7 +119,7 @@ provided at `/device/<dev_id>/training/<model_uuid>`. Matching the example
 above with the client ID:
 
 ```
-curl localhost:8000/device/RIOT-6581A869BAFF5CA1/training/c88b1f35-761a-4897-96e6-89921065e176
+curl localhost:8000/device/RIOT-A5635F88C1662B08/training/c88b1f35-761a-4897-96e6-89921065e176
 ```
 
 This provides the (dummy) training data provided by the clients

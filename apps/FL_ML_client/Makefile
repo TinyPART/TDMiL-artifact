@@ -57,7 +57,7 @@ FL_CLIENT_ID ?= 1
 #GCOAP_TOKENLEN = 2
 #CFLAGS += -DCONFIG_GCOAP_TOKENLEN=$(GCOAP_TOKENLEN)
 
-CORD_ENDPOINT_SINGLETON_ADDRESS ?= \"[2001:db8::b0da:2dff:fe62:a4a3]\"
+CORD_ENDPOINT_SINGLETON_ADDRESS ?= \"[2001:db8::481:f3b1:4556:7d42]\"
 
 # Increase from default for confirmable block2 follow-on requests
 GCOAP_RESEND_BUFS_MAX ?= 4
