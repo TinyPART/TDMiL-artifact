@@ -1,6 +1,6 @@
-# ICDCS TDMiL Artifact 
+# IEEE Access TDMiL Artifact 
 
-This report contains the source code artifact for the ICDCS'24 submission on
+This report contains the source code artifact for the IEEE Access'24 submission on
 TDMiL
 
 ## Repository Outline
