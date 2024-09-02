@@ -95,3 +95,6 @@ keys/
 
 # radvd pid
 radvd.d/radvd.pid
+
+# tex files
+*.tex
