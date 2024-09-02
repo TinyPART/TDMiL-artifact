@@ -11,6 +11,8 @@
 #include "blob/data/val_iris_norm.csv.h"
 #include "blob/data/test_iris_norm.csv.h"
 #include "helper.h"
+#include <random>
+#include <cmath>
 using namespace Eigen;
 using namespace std;
 class NeuralNetwork
@@ -28,17 +30,20 @@ public:
 
     VectorXf relu(const VectorXf &z)
     {
-        return z.array().max(0.0);
+        return z.array().max(0.0f);
     }
+
     VectorXf softmax(const VectorXf &z)
     {
         VectorXf expZ = z.array().exp();
         return expZ / expZ.sum();
     }
+
     VectorXf relu_derivative(const VectorXf &z)
     {
-        return (z.array() > 0.0).cast<float>();
+        return (z.array() > 0.0f).cast<float>();
     }
+
     VectorXf forward(const VectorXf &x)
     {
         hiddenLayer = relu(W1 * x + b1);
@@ -46,53 +51,94 @@ public:
         return outputLayer;
     }
 
-    void train(const MatrixXf &train_X, const MatrixXf &train_y, const MatrixXf &test_X, const MatrixXf &test_y, float learningRate, int epochs)
+    void train(const MatrixXf &train_X, const MatrixXf &train_y, const MatrixXf &val_X, const MatrixXf &val_y, float learningRate, int epochs, int batchSize, bool useDP = false, float epsilon = 1.0f, float delta = 1e-5f, float clipNorm = 1.0f)
     {
+        std::default_random_engine generator;
+        int numBatches = train_X.rows() / batchSize;
+        float noise_multiplier = useDP ? computeNoiseMultiplier(epsilon, delta, batchSize, train_X.rows(), epochs) : 0.0f;
+
         for (int epoch = 0; epoch < epochs; ++epoch)
         {
-            for (int i = 0; i < train_X.rows(); ++i)
-            {
-                // Forward pass
-                VectorXf x = train_X.row(i);
-                VectorXf target = train_y.row(i);
-                outputLayer = forward(x);
+            // Shuffle the training data
+            PermutationMatrix<Dynamic, Dynamic> perm(train_X.rows());
+            perm.setIdentity();
+            std::random_shuffle(perm.indices().data(), perm.indices().data() + perm.indices().size());
+            MatrixXf shuffled_X = perm * train_X;
+            MatrixXf shuffled_y = perm * train_y;
 
-                // Backpropagation
-                VectorXf dL_dz2 = outputLayer - target;
-                VectorXf dL_dh = W2.transpose() * dL_dz2;
-                VectorXf dL_dz1 = dL_dh.array() * relu_derivative(hiddenLayer).array();
-                ;
+            for (int batch = 0; batch < numBatches; ++batch)
+            {
+                MatrixXf gradW1 = MatrixXf::Zero(W1.rows(), W1.cols());
+                MatrixXf gradW2 = MatrixXf::Zero(W2.rows(), W2.cols());
+                VectorXf gradb1 = VectorXf::Zero(b1.size());
+                VectorXf gradb2 = VectorXf::Zero(b2.size());
+
+                for (int i = batch * batchSize; i < (batch + 1) * batchSize && i < train_X.rows(); ++i)
+                {
+                    VectorXf x = shuffled_X.row(i);
+                    VectorXf target = shuffled_y.row(i);
+                    VectorXf output = forward(x);
+
+                    // Backpropagation
+                    VectorXf dL_dz2 = output - target;
+                    VectorXf dL_dh = W2.transpose() * dL_dz2;
+                    VectorXf dL_dz1 = dL_dh.array() * relu_derivative(hiddenLayer).array();
+
+                    MatrixXf dW2 = dL_dz2 * hiddenLayer.transpose();
+                    MatrixXf dW1 = dL_dz1 * x.transpose();
+
+                    // Clip gradients for DP-SGD
+                    if (useDP)
+                    {
+                        float grad_norm = sqrt(dW1.squaredNorm() + dW2.squaredNorm() + dL_dz1.squaredNorm() + dL_dz2.squaredNorm());
+                        float clip_factor = std::min(1.0f, clipNorm / grad_norm);
+                        dW1 *= clip_factor;
+                        dW2 *= clip_factor;
+                        dL_dz1 *= clip_factor;
+                        dL_dz2 *= clip_factor;
+                    }
+
+                    gradW2 += dW2;
+                    gradW1 += dW1;
+                    gradb1 += dL_dz1;
+                    gradb2 += dL_dz2;
+                }
+
+                // Add noise for DP-SGD
+                if (useDP)
+                {
+                    std::normal_distribution<float> distribution(0.0f, clipNorm * noise_multiplier);
+                    gradW1 += MatrixXf::NullaryExpr(gradW1.rows(), gradW1.cols(), [&]()
+                                                    { return distribution(generator); });
+                    gradW2 += MatrixXf::NullaryExpr(gradW2.rows(), gradW2.cols(), [&]()
+                                                    { return distribution(generator); });
+                    gradb1 += VectorXf::NullaryExpr(gradb1.size(), [&]()
+                                                    { return distribution(generator); });
+                    gradb2 += VectorXf::NullaryExpr(gradb2.size(), [&]()
+                                                    { return distribution(generator); });
+                }
 
                 // Update weights and biases
-                W2 -= learningRate * dL_dz2 * hiddenLayer.transpose();
-                b2 -= learningRate * dL_dz2;
-                W1 -= learningRate * dL_dz1 * x.transpose();
-                b1 -= learningRate * dL_dz1;
+                W2 -= learningRate * gradW2 / batchSize;
+                W1 -= learningRate * gradW1 / batchSize;
+                b2 -= learningRate * gradb2 / batchSize;
+                b1 -= learningRate * gradb1 / batchSize;
             }
 
             // Evaluate the accuracy at the end of each epoch and print it
-            float accuracy = evaluateAccuracy(test_X, test_y);
-            cout << "Epoch " << epoch + 1 << ": Accuracy = " << accuracy * 100 << endl;
+            float trainAccuracy = evaluateAccuracy(train_X, train_y);
+            float valAccuracy = evaluateAccuracy(val_X, val_y);
+            cout << "Epoch " << epoch + 1 << ": Train Accuracy = " << trainAccuracy * 100
+                 << "%, Validation Accuracy = " << valAccuracy * 100 << "%" << endl;
         }
     }
 
     int predict(const VectorXf &x)
     {
         VectorXf probabilities = forward(x);
-        int predictedClass = 0;
-        float maxProbability = probabilities[0];
-
-        for (int i = 1; i < probabilities.size(); ++i)
-        {
-            if (probabilities[i] > maxProbability)
-            {
-                maxProbability = probabilities[i];
-                predictedClass = i;
-            }
-        }
-
-        return predictedClass;
+        return std::distance(probabilities.data(), std::max_element(probabilities.data(), probabilities.data() + probabilities.size()));
     }
+
     float evaluateAccuracy(const MatrixXf &X, const MatrixXf &y)
     {
         int correct = 0;
@@ -165,12 +211,20 @@ private:
     MatrixXf W1, W2;
     VectorXf b1, b2;
     VectorXf hiddenLayer, outputLayer;
+
+    float computeNoiseMultiplier(float epsilon, float delta, int batchSize, int datasetSize, int epochs)
+    {
+        float q = static_cast<float>(batchSize) / datasetSize;
+        float T = epochs * (datasetSize / batchSize);
+        float c = sqrt(2 * log(1.25 / delta)) / epsilon;
+        return c * sqrt(T * q);
+    }
 };
 int main()
 { // Load train data
-    constexpr size_t iris_aug_train_csv_size = sizeof(train_niid_iris_norm_1_csv);
+    constexpr size_t iris_aug_train_csv_size = sizeof(train_iid_iris_norm_0_csv);
 
-    std::istringstream iss_train(std::string(reinterpret_cast<const char *>(train_niid_iris_norm_1_csv), iris_aug_train_csv_size));
+    std::istringstream iss_train(std::string(reinterpret_cast<const char *>(train_iid_iris_norm_0_csv), iris_aug_train_csv_size));
     int numFeatures = 4; // Number of features
     int numLabels = 3;   // Number of label classes
 
@@ -194,94 +248,39 @@ int main()
     MatrixXf X_val = data_val.first;
     MatrixXf y_val = data_val.second;
 
-    // Create and train the neural network
+    // Create neural network
     int inputSize = X_train.cols();
-    int hiddenSize = 2;
+    int hiddenSize = 6;
     int outputSize = y_train.cols();
-    NeuralNetwork nn(inputSize, hiddenSize, outputSize);
 
-    float learningRate = 0.001;
+    // Training parameters
+    float learningRate = 0.01;
     int epochs = 200;
-    puts("Started Training...");
-    nn.train(X_train, y_train, X_val, y_val, learningRate, epochs);
-    puts("Completed Training...");
-    MatrixXf W1_trained = nn.getW1();
-    VectorXf b1_trained = nn.getb1();
-    MatrixXf W2_trained = nn.getW2();
-    VectorXf b2_trained = nn.getb2();
+    int batchSize = 64;
 
-    cout << "Original W1_trained:\n"
-         << W1_trained << endl;
-    cout << "Original b1_trained:\n"
-         << b1_trained << endl;
-    cout << "Original W2_trained:\n"
-         << W2_trained << endl;
-    cout << "Original b2_trained:\n"
-         << b2_trained << endl;
-    // Calculate total size
-    size_t totalSize = W1_trained.size() + b1_trained.size() + W2_trained.size() + b2_trained.size();
+    // Train without DP
+    cout << "Training without Differential Privacy:" << endl;
+    NeuralNetwork nn_without_dp(inputSize, hiddenSize, outputSize);
+    nn_without_dp.train(X_train, y_train, X_val, y_val, learningRate, epochs, batchSize);
 
-    // Create a standard array
-    float *float_array = new float[totalSize];
+    float accuracy_without_dp = nn_without_dp.evaluateAccuracy(X_test, y_test);
+    cout << "Test Accuracy without DP = " << accuracy_without_dp * 100 << "%" << endl;
 
-    // Flatten matrices and vectors into the array
-    size_t index = 0;
+    // Train with DP
+    cout << "\nTraining with Differential Privacy:" << endl;
+    NeuralNetwork nn_with_dp(inputSize, hiddenSize, outputSize);
+    float epsilon = 1.0;
+    float delta = 1e-5;
+    float clipNorm = 1.0;
+    nn_with_dp.train(X_train, y_train, X_val, y_val, learningRate, epochs, batchSize, true, epsilon, delta, clipNorm);
 
-    for (int i = 0; i < W1_trained.size(); ++i)
-        float_array[index++] = W1_trained(i);
-    for (int i = 0; i < b1_trained.size(); ++i)
-        float_array[index++] = b1_trained(i);
-    for (int i = 0; i < W2_trained.size(); ++i)
-        float_array[index++] = W2_trained(i);
-    for (int i = 0; i < b2_trained.size(); ++i)
-        float_array[index++] = b2_trained(i);
-    cout << W1_trained.size();
-    // Convert the float array to a uint8_t*
-    uint8_t *buffer = (uint8_t *)float_array;
+    float accuracy_with_dp = nn_with_dp.evaluateAccuracy(X_test, y_test);
+    cout << "Test Accuracy with DP = " << accuracy_with_dp * 100 << "%" << endl;
 
-    // Create and populate mlmodel_param_t
-    mlmodel_param_t param;
-    const char *name_value = "initial_param";
-    param.name = name_value;
-    param.values = buffer;
-    param.num_bytes = totalSize;
-    param.permission = MLMODEL_PARAM_PERMISSION_WRITE;
-    param.volatile_values = nullptr;
-    param.persistent_values = nullptr;
-    std::cout << "param.name: " << param.name << std::endl;
-    float *float_array_back = (float *)param.values;
-
-    // Create matrices and vectors
-    MatrixXf W1_back = Map<MatrixXf>(float_array_back, hiddenSize, inputSize);
-    float_array_back += W1_back.size();
-
-    VectorXf b1_back = Map<VectorXf>(float_array_back, hiddenSize);
-    float_array_back += b1_back.size();
-
-    MatrixXf W2_back = Map<MatrixXf>(float_array_back, outputSize, hiddenSize);
-    float_array_back += W2_back.size();
-
-    VectorXf b2_back = Map<VectorXf>(float_array_back, outputSize);
-    // print deserialized values
-    cout << "W1_back:\n"
-         << W1_back << endl;
-    cout << "b1_back:\n"
-         << b1_back << endl;
-    cout << "W2_back:\n"
-         << W2_back << endl;
-    cout << "b2_back:\n"
-         << b2_back << endl;
-    // Print deserialized values
-    cout << "Shape of W1_back: " << W1_back.rows() << "x" << W1_back.cols() << endl;
-
-    cout << "Size of b1_back: " << b1_back.size() << endl;
-
-    cout << "Shape of W2_back: " << W2_back.rows() << "x" << W2_back.cols() << endl;
-
-    cout << "Size of b2_back: " << b2_back.size() << endl;
-
-    float accuracy = nn.evaluateAccuracy(X_test, y_test);
-    cout << " Test Accuracy = " << accuracy * 100 << endl;
+    cout << "\nComparison:" << endl;
+    cout << "Accuracy without DP: " << accuracy_without_dp * 100 << "%" << endl;
+    cout << "Accuracy with DP: " << accuracy_with_dp * 100 << "%" << endl;
+    cout << "Accuracy difference: " << (accuracy_without_dp - accuracy_with_dp) * 100 << " percentage points" << endl;
 
     return 0;
 }
