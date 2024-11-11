@@ -1,7 +1,13 @@
 # IEEE Access TDMiL Artifact 
 
-This report contains the source code artifact for the IEEE Access'24 submission on
-TDMiL
+This report contains the source code artifact for the IEEE Access'24 paper on
+TDMiL. 
+
+To refer to this work, please cite:
+
+```
+M. Gulati, K. Zandberg, Z. Huang, G. Wunder, C. Adjih, E. Baccelli. TDMiL: Tiny Distributed Machine Learning for Microcontroller-Based Interconnected Devices. In IEEE Access, Oct. 2024.
+```
 
 ## Repository Outline
 
