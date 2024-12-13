@@ -6,7 +6,16 @@ TDMiL.
 To refer to this work, please cite:
 
 ```
-M. Gulati, K. Zandberg, Z. Huang, G. Wunder, C. Adjih, E. Baccelli. TDMiL: Tiny Distributed Machine Learning for Microcontroller-Based Interconnected Devices. In IEEE Access, Oct. 2024.
+@ARTICLE{10745482,
+  author={Gulati, Mayank and Zandberg, Koen and Huang, Zhaolan and Wunder, Gerhard and Adjih, Cedric and Baccelli, Emmanuel},
+  journal={IEEE Access}, 
+  title={TDMiL: Tiny Distributed Machine Learning for Microcontroller-Based Interconnected Devices}, 
+  year={2024},
+  volume={12},
+  number={},
+  pages={167810-167826},
+  keywords={Protocols;Training;Internet of Things;Microcontrollers;Machine learning;Data models;Tiny machine learning;Distance learning;Computer aided instruction;Transfer learning;Distributed computing;Federated learning;Tiny machine learning;Distributed learning;federated learning (FL);Internet of Things (IoT);machine learning;microcontrollers;TinyML-as-a-Service (TMLaaS)},
+  doi={10.1109/ACCESS.2024.3492921}}
 ```
 
 ## Repository Outline
